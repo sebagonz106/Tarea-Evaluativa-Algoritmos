@@ -179,3 +179,196 @@ Documento de la orden del proyecto (archivo \texttt{orden.pdf}) — enunciado de
 \end{thebibliography}
 
 \end{document}
+
+
+
+
+% derivadas.tex
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{physics}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Cálculo del gradiente y la Hessiana}
+\author{Derivaciones detalladas}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Función objetivo}
+Sea
+\[
+f(x,y) = -200 \exp\!\big(-0.02\sqrt{x^{2}+y^{2}+1}\,\big).
+\]
+Para abreviar, definimos
+\[
+s(x,y):=\sqrt{x^{2}+y^{2}+1}\qquad (\text{por tanto } s>0).
+\]
+Entonces
+\[
+f(x,y) = -200 e^{-0.02 s}.
+\]
+
+\section{Gradiente}
+Queremos calcular \(\nabla f=(\partial_x f,\partial_y f)^\top\).
+
+Empezamos observando la derivada de \(s\):
+\[
+\frac{\partial s}{\partial x} = \frac{x}{s},\qquad
+\frac{\partial s}{\partial y} = \frac{y}{s},
+\]
+pues \(s=\sqrt{x^{2}+y^{2}+1}\) y aplicamos la regla de la cadena.
+
+Ahora aplicamos la regla de la cadena a \(f(x,y)=-200 e^{-0.02 s}\):
+\[
+\frac{\partial f}{\partial x} = -200 \cdot e^{-0.02 s}\cdot(-0.02)\cdot\frac{\partial s}{\partial x}
+= (-200)(-0.02)\, e^{-0.02 s}\cdot\frac{x}{s}.
+\]
+Calculamos el factor numérico \((-200)(-0.02)=4\). Por tanto
+\[
+\boxed{\ \frac{\partial f}{\partial x} = 4\, e^{-0.02 s}\,\frac{x}{s}\ }.
+\]
+De forma análoga,
+\[
+\boxed{\ \frac{\partial f}{\partial y} = 4\, e^{-0.02 s}\,\frac{y}{s}\ }.
+\]
+
+Por lo tanto el gradiente queda
+\[
+\boxed{\ \nabla f(x,y)=4\, e^{-0.02 s}\,\frac{1}{s}\begin{pmatrix} x\\[4pt] y\end{pmatrix}
+\ }.
+\]
+
+\section{Hessiana}
+Denotaremos \(g(x,y):=4\, e^{-0.02 s}\) y \(v(x,y):=\dfrac{1}{s}\begin{pmatrix}x\\ y\end{pmatrix}\),
+de modo que \(\nabla f = g\, v\). Para la Hessiana \(H=\nabla^{2}f\) usamos la regla del producto matricial:
+\[
+H = (\nabla g)\,v^{\top} + g\,\nabla v.
+\]
+Calculamos los términos por separado.
+
+\subsection*{Derivadas de \(g\)}
+Recordando \(g=4 e^{-0.02 s}\),
+\[
+\frac{\partial g}{\partial x} = 4 \cdot e^{-0.02 s}\cdot(-0.02)\cdot\frac{\partial s}{\partial x}
+= -0.08\, e^{-0.02 s}\,\frac{x}{s},
+\]
+y de forma análoga
+\[
+\frac{\partial g}{\partial y} = -0.08\, e^{-0.02 s}\,\frac{y}{s}.
+\]
+Así,
+\[
+\nabla g = -0.08\, e^{-0.02 s}\,\frac{1}{s}\begin{pmatrix} x\\[4pt] y\end{pmatrix}.
+\]
+
+\subsection*{Derivadas de \(v\)}
+Recordemos \(v=(x/s,\; y/s)^{\top}\). Calculemos las componentes de la matriz Jacobiana \(\nabla v\), es decir
+\(\big(\partial_{j} v_{i}\big)_{i,j=1,2}\).
+
+Primero derivamos \(v_{1}=x/s\) respecto a \(x\) e \(y\):
+\[
+\frac{\partial}{\partial x}\left(\frac{x}{s}\right)
+= \frac{1}{s} - \frac{x}{s^{2}}\frac{\partial s}{\partial x}
+= \frac{1}{s} - \frac{x}{s^{2}}\cdot\frac{x}{s}
+= \frac{1}{s} - \frac{x^{2}}{s^{3}}
+= \frac{s^{2}-x^{2}}{s^{3}}.
+\]
+Observando que \(s^{2}=x^{2}+y^{2}+1\), se puede escribir \(s^{2}-x^{2}=y^{2}+1\), por tanto
+\[
+\frac{\partial}{\partial x}\left(\frac{x}{s}\right) = \frac{y^{2}+1}{s^{3}}.
+\]
+
+La derivada de \(v_{1}=x/s\) respecto a \(y\) es
+\[
+\frac{\partial}{\partial y}\left(\frac{x}{s}\right)
+= -\,\frac{x}{s^{2}}\frac{\partial s}{\partial y}
+= -\,\frac{x}{s^{2}}\cdot\frac{y}{s}
+= -\,\frac{xy}{s^{3}}.
+\]
+
+Análogamente para \(v_{2}=y/s\):
+\[
+\frac{\partial}{\partial y}\left(\frac{y}{s}\right) = \frac{x^{2}+1}{s^{3}},\qquad
+\frac{\partial}{\partial x}\left(\frac{y}{s}\right) = -\,\frac{xy}{s^{3}}.
+\]
+
+Por tanto la matriz \(\nabla v\) (Jacobiano de \(v\)) es
+\[
+\nabla v = \frac{1}{s^{3}}
+\begin{pmatrix}
+y^{2}+1 & -xy\\[6pt]
+-xy & x^{2}+1
+\end{pmatrix}.
+\]
+
+\subsection*{Composición final}
+Recordando \(H = (\nabla g)\,v^{\top} + g\,\nabla v\),
+sustituimos \(\nabla g\), \(v\) y \(g\).
+
+Calculemos primero \((\nabla g)\,v^{\top}\). Dado que
+\(\nabla g = -0.08\, e^{-0.02 s}\,\dfrac{1}{s}\begin{pmatrix} x\\ y\end{pmatrix}\) y
+\(v^{\top} = \dfrac{1}{s}(x\; y)\),
+tenemos
+\[
+(\nabla g)\,v^{\top} = -0.08\, e^{-0.02 s}\,\frac{1}{s}\begin{pmatrix} x\\ y\end{pmatrix}
+\cdot \frac{1}{s}(x\; y)
+= -0.08\, e^{-0.02 s}\,\frac{1}{s^{2}}
+\begin{pmatrix} x^{2} & xy\\[4pt] xy & y^{2}\end{pmatrix}.
+\]
+
+Ahora \(g\,\nabla v = 4 e^{-0.02 s}\cdot \dfrac{1}{s^{3}}
+\begin{pmatrix} y^{2}+1 & -xy\\[6pt] -xy & x^{2}+1\end{pmatrix}.\)
+
+Sumando ambos términos obtenemos \(H\):
+\[
+H = 4 e^{-0.02 s}\left[
+-0.02\,\frac{1}{s^{2}}
+\begin{pmatrix} x^{2} & xy\\[4pt] xy & y^{2}\end{pmatrix}
++\frac{1}{s^{3}}
+\begin{pmatrix} y^{2}+1 & -xy\\[6pt] -xy & x^{2}+1\end{pmatrix}
+\right],
+\]
+porque \(-0.08/4 = -0.02\). Si factorizamos \(4 e^{-0.02 s}\) y combinamos términos, una forma compacta y útil es:
+
+\[
+\boxed{\ 
+\nabla^{2} f(x,y) \;=\; 4\, e^{-0.02 s}\!\left(\;
+\frac{1}{s} I_{2}
+-\frac{0.02\,s + 1}{s^{3}}
+\begin{pmatrix} x^{2} & xy \\[4pt] xy & y^{2} \end{pmatrix}
+\right)\;
+}
+\]
+donde \(I_{2}\) es la matriz identidad \(2\times 2\).
+
+\subsection*{Componentes explícitos}
+Si se desea ver las componentes explícitas:
+\begin{align*}
+\frac{\partial^{2} f}{\partial x^{2}}
+&=4 e^{-0.02 s}\!\left(\frac{1}{s}-\frac{x^{2}(0.02 s +1)}{s^{3}}\right),\\[6pt]
+\frac{\partial^{2} f}{\partial y^{2}}
+&=4 e^{-0.02 s}\!\left(\frac{1}{s}-\frac{y^{2}(0.02 s +1)}{s^{3}}\right),\\[6pt]
+\frac{\partial^{2} f}{\partial x\partial y}
+&=-4 e^{-0.02 s}\,\frac{xy(0.02 s +1)}{s^{3}}.
+\end{align*}
+
+\section*{Observaciones}
+\begin{itemize}
+  \item La Hessiana está definida en todo \((x,y)\in\mathbb{R}^{2}\) ya que \(s=\sqrt{x^{2}+y^{2}+1}\ge 1>0\).
+  \item Para análisis teórico y numérico, la forma factorizada
+  \[
+  \nabla^{2} f = 4 e^{-0.02 s}\Big(\tfrac{1}{s}I - \tfrac{0.02 s+1}{s^{3}}\, uu^{\top}\Big),
+  \qquad u=\begin{pmatrix}x\\ y\end{pmatrix},
+  \]
+  es conveniente: muestra explícitamente la estructura identidad menos un término de rango 1 escalado por \(uu^{\top}\).
+  \item Cerca del origen (pequeñas \(x,y\)) se puede evaluar la Hessiana sustituyendo \(s\approx 1+\tfrac{1}{2}(x^{2}+y^{2})\) si se desea una aproximación en serie.
+\end{itemize}
+
+\end{document}

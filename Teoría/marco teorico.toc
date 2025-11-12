@@ -1,44 +1,63 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {section}{\numberline {1}Marco Teórico}{2}{section.1}%
-\contentsline {section}{\numberline {2}Análisis de la función}{2}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Regularidad}{2}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Gradiente}{2}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Puntos críticos}{2}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Hessiano y clasificación del punto crítico}{3}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Mínimo global y comportamiento en el infinito}{3}{subsection.2.5}%
-\contentsline {subsection}{\numberline {2.6}Convexidad}{3}{subsection.2.6}%
-\contentsline {subsection}{\numberline {2.7}Consecuencias prácticas para algoritmos}{3}{subsection.2.7}%
-\contentsline {subsection}{\numberline {2.8}Interpretación geométrica}{4}{subsection.2.8}%
-\contentsline {paragraph}{Curvas de nivel.}{4}{section*.2}%
-\contentsline {paragraph}{Forma tridimensional.}{4}{section*.3}%
-\contentsline {paragraph}{Comportamiento de la pendiente.}{5}{section*.4}%
-\contentsline {paragraph}{Interpretación física.}{5}{section*.5}%
-\contentsline {subsection}{\numberline {2.9}Cotas y comportamiento asintótico}{5}{subsection.2.9}%
-\contentsline {paragraph}{Cotas globales.}{5}{section*.6}%
-\contentsline {paragraph}{Comportamiento asintótico.}{5}{section*.7}%
-\contentsline {paragraph}{Conclusión del análisis asintótico.}{6}{section*.8}%
-\contentsline {subsection}{\numberline {2.10}Campo de gradientes}{6}{subsection.2.10}%
-\contentsline {paragraph}{Gradiente analítico.}{6}{section*.9}%
-\contentsline {paragraph}{Interpretación geométrica.}{6}{section*.10}%
-\contentsline {paragraph}{Magnitud y comportamiento.}{6}{section*.11}%
-\contentsline {paragraph}{Curvatura y estabilidad local.}{7}{section*.12}%
-\contentsline {paragraph}{Método del gradiente descendente.}{7}{section*.14}%
-\contentsline {paragraph}{Método de Newton.}{7}{section*.15}%
-\contentsline {paragraph}{Métodos estocásticos y variantes.}{7}{section*.16}%
-\contentsline {paragraph}{Conclusión metodológica.}{7}{section*.17}%
-\contentsline {paragraph}{Predicciones basadas en el análisis teórico.}{8}{section*.19}%
-\contentsline {paragraph}{Diseño de experimentos.}{8}{section*.20}%
-\contentsline {paragraph}{Validación esperada.}{8}{section*.21}%
-\contentsline {paragraph}{Conclusión.}{8}{section*.22}%
-\contentsline {paragraph}{Descripción general.}{9}{section*.25}%
-\contentsline {paragraph}{Aplicación al modelo.}{9}{section*.26}%
-\contentsline {paragraph}{Ventajas.}{9}{section*.27}%
-\contentsline {paragraph}{Desventajas.}{10}{section*.28}%
-\contentsline {paragraph}{Recomendación práctica.}{10}{section*.29}%
-\contentsline {paragraph}{Descripción general.}{10}{section*.31}%
-\contentsline {paragraph}{Aplicación al modelo.}{10}{section*.32}%
-\contentsline {paragraph}{Ventajas.}{10}{section*.33}%
-\contentsline {paragraph}{Desventajas.}{10}{section*.34}%
-\contentsline {paragraph}{Variante quasi-Newton (BFGS).}{11}{section*.35}%
-\contentsline {paragraph}{Recomendación práctica.}{11}{section*.36}%
-\contentsline {paragraph}{Conclusión comparativa.}{11}{section*.38}%
+\contentsline {section}{\numberline {1}Marco Teórico \cite {Bouza2021}}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Notación y definición general}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Clases de problemas y propiedades básicas}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Principales familias de algoritmos}{2}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}Métodos por direcciones (línea de búsqueda)}{2}{subsubsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.4}Direcciones de búsqueda en los métodos quasi--Newton}{3}{subsection.1.4}%
+\contentsline {paragraph}{Forma general de la dirección}{3}{section*.2}%
+\contentsline {paragraph}{Resumen comparativo}{4}{section*.5}%
+\contentsline {paragraph}{Propiedades principales}{4}{section*.6}%
+\contentsline {subsection}{\numberline {1.5}Selección del tamaño de paso: condiciones de Armijo y de Wolfe}{4}{subsection.1.5}%
+\contentsline {paragraph}{Interpretación:}{4}{section*.8}%
+\contentsline {paragraph}{Longitud de paso (line search):}{5}{section*.12}%
+\contentsline {subsubsection}{\numberline {1.5.1}Métodos de región de confianza (trust-region)}{5}{subsubsection.1.5.1}%
+\contentsline {subsubsection}{\numberline {1.5.2}Métodos para problemas con restricciones}{6}{subsubsection.1.5.2}%
+\contentsline {subsection}{\numberline {1.6}Convergencia: órdenes y condiciones}{6}{subsection.1.6}%
+\contentsline {subsection}{\numberline {1.7}Criterios de parada y métricas numéricas}{6}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.8}Consideraciones numéricas y prácticas}{6}{subsection.1.8}%
+\contentsline {section}{\numberline {2}Gradiente}{7}{section.2}%
+\contentsline {section}{\numberline {3}Hessiana}{7}{section.3}%
+\contentsline {section}{\numberline {4}Análisis de la función}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Regularidad}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Gradiente}{10}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Puntos críticos}{10}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Hessiano y clasificación del punto crítico}{10}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Mínimo global y comportamiento en el infinito}{10}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Convexidad}{11}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Consecuencias prácticas para algoritmos}{11}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Interpretación geométrica}{11}{subsection.4.8}%
+\contentsline {paragraph}{Curvas de nivel.}{12}{section*.18}%
+\contentsline {paragraph}{Forma tridimensional.}{12}{section*.19}%
+\contentsline {paragraph}{Comportamiento de la pendiente.}{12}{section*.20}%
+\contentsline {paragraph}{Interpretación física.}{12}{section*.21}%
+\contentsline {subsection}{\numberline {4.9}Cotas y comportamiento asintótico}{12}{subsection.4.9}%
+\contentsline {paragraph}{Cotas globales.}{13}{section*.22}%
+\contentsline {paragraph}{Comportamiento asintótico.}{13}{section*.23}%
+\contentsline {paragraph}{Conclusión del análisis asintótico.}{13}{section*.24}%
+\contentsline {subsection}{\numberline {4.10}Campo de gradientes}{13}{subsection.4.10}%
+\contentsline {paragraph}{Gradiente analítico.}{13}{section*.25}%
+\contentsline {paragraph}{Interpretación geométrica.}{14}{section*.26}%
+\contentsline {paragraph}{Magnitud y comportamiento.}{14}{section*.27}%
+\contentsline {paragraph}{Curvatura y estabilidad local.}{14}{section*.28}%
+\contentsline {paragraph}{Método del gradiente descendente.}{14}{section*.30}%
+\contentsline {paragraph}{Método de Newton.}{14}{section*.31}%
+\contentsline {paragraph}{Métodos estocásticos y variantes.}{15}{section*.32}%
+\contentsline {paragraph}{Conclusión metodológica.}{15}{section*.33}%
+\contentsline {paragraph}{Predicciones basadas en el análisis teórico.}{15}{section*.35}%
+\contentsline {paragraph}{Diseño de experimentos.}{15}{section*.36}%
+\contentsline {paragraph}{Validación esperada.}{16}{section*.37}%
+\contentsline {paragraph}{Conclusión.}{16}{section*.38}%
+\contentsline {paragraph}{Descripción general.}{16}{section*.41}%
+\contentsline {paragraph}{Aplicación al modelo.}{16}{section*.42}%
+\contentsline {paragraph}{Ventajas.}{17}{section*.43}%
+\contentsline {paragraph}{Desventajas.}{17}{section*.44}%
+\contentsline {paragraph}{Recomendación práctica.}{17}{section*.45}%
+\contentsline {paragraph}{Descripción general.}{17}{section*.47}%
+\contentsline {paragraph}{Aplicación al modelo.}{17}{section*.48}%
+\contentsline {paragraph}{Ventajas.}{17}{section*.49}%
+\contentsline {paragraph}{Desventajas.}{18}{section*.50}%
+\contentsline {paragraph}{Variante quasi-Newton (BFGS).}{18}{section*.51}%
+\contentsline {paragraph}{Recomendación práctica.}{18}{section*.52}%
+\contentsline {paragraph}{Conclusión comparativa.}{18}{section*.54}%
+\contentsline {section}{\numberline {5}Bibliografía}{18}{section.5}%
