@@ -1,0 +1,181 @@
+Dado un problema de optimización, se desea que se analice teóricamente que tipo de problema es, se le aplique algoritmos enseñados en clase o variaciones de este que sea adecuado al problema y se analice la calidad de la solución obtenida. Pueden usarse algoritmos de librerías siempre q se declaren y se refiera a la documentación del mismo
+
+Estructura de la tarea:
+1- Nombre y Grupo
+2- Modelos a analizar
+3- Análisis de los modelos? Existencia de solución, convexidad?
+4- Descripción de los algoritmos utilizados (mínimo 2)
+5- Comparación de resultados (numero de pasos, diferentes tamaños de pasos, diferentes puntos de partida)
+6- Graficación del modelo y de instancias de los algoritmos.
+
+Sus algoritmos serán probados para puntos entre -100,100 para ambas variables. Debe experimentarse lo más posible, ver posibles óptimos locales, zonas complicadas, investigar tanto los algoritmos que usaran como porque y donde pueden estrellarse.
+
+% marco_teorico.tex
+% Marco teórico: Optimización no lineal y algoritmos (agnóstico al problema)
+% Autor: Generado automáticamente
+% Basado en: Notas de clase Temas 1 y 2 (Bouza Allende, 2021) y material del proyecto (orden.pdf)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\title{Marco teórico: Problemas de optimización no lineal y algoritmos}
+\author{(Material extraído de la bibliografía proporcionada)}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Este marco teórico presenta, de manera concisa y autónoma, los conceptos y resultados matemáticos necesarios para abordar problemas de optimización no lineal y su resolución mediante algoritmos numéricos. Está redactado de forma agnóstica respecto al problema concreto: presenta definiciones, condiciones de optimalidad, clases de problemas, esquemas algorítmicos principales, criterios de convergencia y consideraciones numéricas que serán utilizados en la sección de resolución que sigue a este documento.
+\end{abstract}
+
+\section{Notación y definición general}
+Sea \(f:\mathbb{R}^n\to\mathbb{R}\) la función objetivo y sea \(M\subset\mathbb{R}^n\) el conjunto factible. Consideramos el problema general
+\[
+(P)\quad \min_{x\in M} f(x).
+\]
+Con frecuencia \(M\) viene descrito mediante restricciones de igualdad y desigualdad:
+\[
+M=\{x\in\mathbb{R}^n \mid h_i(x)=0,\; i=1,\dots,m;\; g_j(x)\le 0,\; j=1,\dots,s\}.
+\]
+Denotamos por \(\nabla f(x)\) el gradiente y por \(\nabla^2 f(x)\) la matriz Hessiana cuando existan.
+
+\section{Clases de problemas y propiedades básicas}
+\begin{itemize}[nosep]
+  \item \textbf{Irrestricto:} \(M=\mathbb{R}^n\).
+  \item \textbf{Restricciones de igualdad / desigualdad.}
+  \item \textbf{Problemas convexos:} si \(f\) es convexa y \(M\) es convexo, cualquier mínimo local es también mínimo global.
+  \item \textbf{Cuadráticos y lineales:} caso especial con propiedades analíticas (p.ej. unicidad con \(\nabla^2 f \succ 0\) en cuadrático).
+\end{itemize}
+
+\section{Existencia de soluciones}
+Condiciones elementales para existencia:
+\begin{itemize}[nosep]
+  \item Si \(M\) es compacto y \(f\) es continua entonces existe mínimo global.
+  \item En problemas no compactos, condiciones de coercividad de \(f\) (p.ej. \(f(x)\to\infty\) cuando \(\|x\|\to\infty\)) garantizan existencia.
+\end{itemize}
+
+\section{Condiciones necesarias de optimalidad}
+\subsection{Caso irrestricto}
+Si \(f\in C^1\) y \(x^\ast\) es un mínimo local interior, entonces \(\nabla f(x^\ast)=0\) (condición de primer orden).
+
+\subsection{Con restricciones (KKT)}
+Sea \(x^\ast\) mínimo local factible bajo condiciones regulares (LICQ u otras). Entonces existen multiplicadores \(\lambda\in\mathbb{R}^m\), \(\mu\in\mathbb{R}^s\) con \(\mu_j\ge 0\) tales que:
+\[
+\nabla f(x^\ast) + \sum_{i=1}^m \lambda_i \nabla h_i(x^\ast) + \sum_{j=1}^s \mu_j \nabla g_j(x^\ast) = 0,
+\]
+sujeto a \(h_i(x^\ast)=0\), \(g_j(x^\ast)\le 0\), \(\mu_j g_j(x^\ast)=0\) (complementariedad) y \(\mu_j\ge 0\).
+La validez de KKT requiere hipótesis de regularidad (p.ej. LICQ: los gradientes activos son linealmente independientes).
+
+\section{Condiciones suficientes}
+\begin{itemize}[nosep]
+  \item \textbf{Irrestricto:} si \(\nabla f(x^\ast)=0\) y \(\nabla^2 f(x^\ast)\) es definida positiva, entonces \(x^\ast\) es mínimo local.
+  \item \textbf{Con restricciones:} condiciones de segundo orden sobre la Hessiana de Lagrangiano restringida al subespacio tangente (p. ej. \(\nabla^2_{xx} L(x^\ast,\lambda^\ast,\mu^\ast)\) definida positiva en el cono tangente) garantizan mínimo local.
+  \item En problemas convexos, KKT es suficiente: cualquier punto que satisfaga KKT es óptimo global.
+\end{itemize}
+
+\section{Dualidad}
+\begin{itemize}[nosep]
+  \item Definimos la función Lagrangiana \(L(x,\lambda,\mu)=f(x)+\sum_i \lambda_i h_i(x)+\sum_j \mu_j g_j(x)\).
+  \item Doble Lagrangeano: \(\theta(\lambda,\mu)=\inf_x L(x,\lambda,\mu)\). La función \(\theta\) es concava en \((\lambda,\mu)\).
+  \item Se cumple dualidad débil: \(\sup_{\mu\ge 0,\lambda}\theta(\lambda,\mu) \le \inf_{x\in M} f(x)\). La dualidad fuerte requiere condiciones (p.ej. convexidad + condiciones de regularidad tipo Slater).
+\end{itemize}
+
+\section{Análisis de la convexidad}
+\begin{itemize}[nosep]
+  \item Definición y caracterizaciones: para \(f\in C^2\), \(f\) convexa \(\iff\) \(\nabla^2 f(x)\succeq 0\) para todo \(x\).
+  \item Implicaciones prácticas: en problemas convexos, los mínimos locales son globales y los algoritmos con garantizada convergencia suelen ser más sencillos de aplicar.
+\end{itemize}
+
+\section{Direcciones factibles, cono tangente y condiciones regulares}
+\begin{itemize}[nosep]
+  \item Definición del conjunto de direcciones factibles y del espacio tangente \(T_x M\).
+  \item Condición LICQ (Linear Independence Constraint Qualification) y otras condiciones (MFCQ, CRCQ) que permiten usar KKT y garantizar estabilidad de multiplicadores.
+\end{itemize}
+
+\section{Criterios de parada y métricas numéricas}
+Criterios típicos:
+\begin{itemize}[nosep]
+  \item \(\|\nabla f(x_k)\| < \varepsilon_{\text{grad}}\).
+  \item \(\|x_{k+1}-x_k\| < \varepsilon_{\text{step}}\).
+  \item Violación de factibilidad (norma de restricciones violadas) por debajo de tolerancia.
+  \item Número máximo de iteraciones o evaluaciones de función.
+\end{itemize}
+
+\section{Principales familias de algoritmos}
+Presentamos las filosofías generales y aspectos clave (convergencia, coste computacional y usos típicos).
+
+\subsection{Métodos por direcciones (línea de búsqueda)}
+Esquema general:
+\[
+x_{k+1}=x_k+\alpha_k d_k,\qquad d_k\ \text{dirección de descenso},\ \alpha_k>0\ \text{longitud de paso}.
+\]
+\paragraph{Direcciones:}
+\begin{itemize}[nosep]
+  \item \emph{Gradiente descendente (steepest descent):} \(d_k=-\nabla f(x_k)\). Orden de convergencia: lineal en general.
+  \item \emph{Newton:} \(d_k=-[\nabla^2 f(x_k)]^{-1}\nabla f(x_k)\). Requiere Hessiana; convergencia cuasi-cuadrática local si Hessiana definida positiva cerca del óptimo.
+  \item \emph{Quasi-Newton (BFGS, DFP):} aproximan la inversa de la Hessiana; convergencia superlineal típica; buena práctica numérica para problemas grandes.
+\end{itemize}
+\paragraph{Longitud de paso (line search):}
+Criterios Armijo y Wolfe para garantizar descenso suficiente y estabilidad.
+
+\subsection{Métodos de región de confianza (trust-region)}
+En vez de buscar en una dirección y hacer line search, se resuelve en cada iteración un subproblema:
+\[
+\min_{\|d\|\le \Delta_k} m_k(d) = f(x_k) + \nabla f(x_k)^T d + \tfrac12 d^T B_k d,
+\]
+donde \(B_k\) es una aproximación de la Hessiana. Ventajas: robustez en presencia de Hessianas indefinidas; buen comportamiento global.
+
+\subsection{Métodos para problemas con restricciones}
+Tres familias principales:
+\begin{itemize}[nosep]
+  \item \textbf{Métodos de penalidad:} transformar restricciones en términos de penalización \(f(x)+\rho P(x)\) con \(\rho\to\infty\). Simples pero pueden inducir condicionamiento pobre y números grandes.
+  \item \textbf{Métodos de barrera (interior-point):} aproximar restricciones mediante funciones-barrier y resolver secuencia de problemas suaves con parámetro \(\mu\to 0^+\). Muy usados en problemas grandes y convexos.
+  \item \textbf{Métodos de tipo SQP (Sequential Quadratic Programming):} en cada iteración se resuelve un QP que aproxima el problema original. Orden de convergencia: cuadrático bajo condiciones regulares. Muy efectivos en restricciones suaves y de dimensión moderada.
+  \item \textbf{Métodos de Lagrangianos aumentados (Augmented Lagrangian):} combinan penalidad y estimación de multiplicadores; robustos frente a problemas de condicionamiento.
+\end{itemize}
+
+\section{Convergencia: órdenes y condiciones}
+\begin{itemize}[nosep]
+  \item \textbf{Convergencia lineal:} \( \|x_{k+1}-x^\ast\| \le c \|x_k-x^\ast\|\) con \(0<c<1\).
+  \item \textbf{Convergencia superlineal:} razón que tiende a 0.
+  \item \textbf{Convergencia cuadrática:} rápida (p.ej. Newton cerca del óptimo cuando Hessiana es Lipschitz y definida positiva).
+  \item La convergencia global suele requerir estrategias de globalización (line search o trust region) combinadas con condiciones de curvatura.
+\end{itemize}
+
+\section{Consideraciones numéricas y prácticas}
+\begin{itemize}[nosep]
+  \item \textbf{Escalado}: importante para estabilidad numérica. Reescalar variables y restricciones cuando las magnitudes difieren mucho.
+  \item \textbf{Condicionamiento}: Hessianas mal condicionadas afectan métodos de Newton y Quasi-Newton; precondicionamiento o regularización pueden ser necesarios.
+  \item \textbf{Cálculo de derivadas}: derivadas exactas (analíticas) cuando sean posibles; si se usan diferencias finitas, elegir paso apropiado y considerar el coste.
+  \item \textbf{Tratamiento de restricciones activas}: detección de índices activos y manejo cuidadoso de la complementariedad para evitar oscilaciones numéricas.
+  \item \textbf{Robustez}: combinar métodos (p.ej. pasar de método robusto de descenso a SQP o Newton local cerca del óptimo) suele ser la práctica recomendada.
+\end{itemize}
+
+\section{Estructura recomendada para la resolución (siguientes pasos)}
+Aunque la resolución concreta no está incluida en este marco, se recomiendan los siguientes pasos metodológicos:
+\begin{enumerate}[nosep]
+  \item Modelar y clasificar el problema (irrestricto / convexo / cuadrático / con restricciones).
+  \item Verificar existencia de solución y condiciones de regularidad (LICQ/Slater).
+  \item Seleccionar esquema algorítmico acorde a la clase: (i) métodos por direcciones o quasi-Newton para casos sin restricciones; (ii) SQP o Augmented Lagrangian para restricciones no lineales; (iii) interior point para problemas convexo-grandes.
+  \item Definir tolerancias y criterios de paro (gradiente, factibilidad, paso).
+  \item Preparar tratamiento numérico (escalado, cálculo de derivadas, precondicionamiento).
+\end{enumerate}
+
+\section*{Bibliografía}
+Se cita el material proporcionado por el usuario como principal referencia para este marco teórico:
+\begin{thebibliography}{9}
+\bibitem{Bouza2021}
+G. Bouza Allende, \emph{Notas de clase: Temas 1 y 2 — Optimización Matemática I}, February 2, 2021. (Documento proporcionado por el usuario).
+
+\bibitem{OrdenProyecto}
+Documento de la orden del proyecto (archivo \texttt{orden.pdf}) — enunciado del problema y requisitos específicos proporcionado por el usuario.
+\end{thebibliography}
+
+\end{document}

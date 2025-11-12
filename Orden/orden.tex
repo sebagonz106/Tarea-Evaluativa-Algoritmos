@@ -1,0 +1,129 @@
+\documentclass[12pt,a4paper]{article}
+
+%-------------------------------------
+% Paquetes recomendados
+%-------------------------------------
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\geometry{margin=2.5cm}
+
+%-------------------------------------
+% Datos del documento
+%-------------------------------------
+\title{\textbf{Tarea: Análisis y Aplicación de Algoritmos de Optimización}}
+\author{Carrera: Ciencia de la Computación \\ Asignatura: Modelos de Optimización}
+\date{}
+
+%-------------------------------------
+% Inicio del documento
+%-------------------------------------
+\begin{document}
+	
+	\maketitle
+	
+	\section*{Objetivo general}
+	A partir del siguiente problema de optimización, el estudiante deberá realizar un análisis teórico y experimental que permita:
+	\begin{itemize}
+		\item Identificar el tipo de problema y sus propiedades analíticas.
+		\item Aplicar algoritmos de optimización adecuados (vistos en clase o variaciones justificadas).
+		\item Evaluar la calidad de las soluciones obtenidas y el comportamiento de los métodos empleados.
+	\end{itemize}
+	
+	El uso de implementaciones de algoritmos en librerías externas está permitido, siempre que se declare explícitamente la fuente y se cite la documentación correspondiente.
+	
+	%-------------------------------------
+	\section*{Función a optimizar}
+	Se considera la siguiente función $f: \mathbb{R}^2 \to \mathbb{R}$:
+	
+	\begin{equation}
+		f(x, y) = -200\, e^{-0.02 \sqrt{x^2 + y^2 + 1}}
+	\end{equation}
+	
+	El objetivo consiste en analizar el comportamiento de esta función y aplicar distintos métodos de optimización para encontrar sus puntos críticos y estacionarios y determinar si corresponden a máximos o mínimos locales o globles.
+	
+	%-------------------------------------
+	\section*{Estructura del informe}
+	
+	El informe deberá contener las secciones siguientes:
+	
+	\begin{enumerate}[label=\textbf{\arabic*.}]
+		\item \textbf{Datos generales}
+		\begin{itemize}
+			\item Nombre completo del estudiante
+			\item Grupo
+		\end{itemize}
+		
+		\item \textbf{Descripción del problema}
+		\begin{itemize}
+			\item Planteamiento formal del problema de optimización (minimización o maximización).
+			\item Identificación del tipo de modelo: lineal, no lineal, continuo, diferenciable, etc.
+		\end{itemize}
+		
+		\item \textbf{Análisis teórico del modelo}
+		\begin{itemize}
+			\item Existencia de solución y condiciones de optimalidad.
+			\item Propiedades del modelo: convexidad, continuidad, etc.
+			\item Interpretación geométrica y analítica de la función.
+		\end{itemize}
+		
+		\item \textbf{Algoritmos utilizados}
+		\begin{itemize}
+			\item Descripción teórica de al menos dos algoritmos aplicados.
+			\item Justificación de la elección de los métodos y su adecuación al problema.
+			\item Referencias a librerías o implementaciones externas, incluyendo documentación oficial.
+		\end{itemize}
+		
+		\item \textbf{Análisis comparativo de resultados}
+		\begin{itemize}
+			\item Comparación del rendimiento de los algoritmos en función de:
+			\begin{itemize}
+				\item Número de iteraciones o pasos.
+				\item Tamaño de paso (\textit{step size}) y parámetros de convergencia.
+				\item Diferentes condiciones iniciales.
+			\end{itemize}
+			\item Discusión sobre eficiencia, precisión y estabilidad.
+		\end{itemize}
+		
+		\item \textbf{Visualización y experimentación}
+		\begin{itemize}
+			\item Graficación del dominio de la función objetivo \( f(x, y) \).
+			\item Representación visual del comportamiento de los algoritmos (trayectorias, contornos, superficie, etc.).
+			\item Análisis de zonas con posibles óptimos locales o comportamientos numéricamente inestables.
+		\end{itemize}
+	\end{enumerate}
+	
+	%-------------------------------------
+	\section*{Condiciones de experimentación}
+	\begin{itemize}
+		\item Los algoritmos deberán probarse para valores de \( x, y \in [-100, 100] \).
+		\item Se recomienda realizar múltiples ejecuciones con diferentes parámetros y puntos iniciales.
+		\item Se deben explorar zonas donde los métodos puedan presentar dificultades de convergencia o comportamiento errático.
+		\item Documentar y explicar claramente las observaciones obtenidas.
+	\end{itemize}
+	
+	%-------------------------------------
+	\newpage
+	\section*{Entrega}
+	\subsubsection*{El informe deberá incluir:}
+	\begin{itemize}
+		\item Código fuente implementado.
+		\item Resultados numéricos y gráficos representativos.
+		\item Conclusiones sobre la efectividad de los métodos aplicados.
+	\end{itemize}
+	
+	\subsubsection*{La evaluación considerará:}
+	\begin{itemize}
+		\item Claridad y profundidad del análisis teórico.
+		\item Justificación de los algoritmos seleccionados.
+		\item Calidad y variedad de los experimentos realizados.
+		\item Presentación formal y redacción del informe.
+	\end{itemize}
+	
+\end{document}
+a
