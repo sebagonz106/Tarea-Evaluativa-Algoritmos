@@ -658,6 +658,31 @@
 	Ambos métodos se complementan: el gradiente descendente ofrece robustez global y simplicidad, mientras que Newton o quasi-Newton proporcionan refinamiento rápido y precisión local.	Una estrategia combinada —utilizando primero el gradiente descendente y luego Newton o BFGS al acercarse al óptimo— representa la solución más eficiente para el problema planteado.
 	
 	
+	\section{Discusión de resultados}
+	
+	
+	\section{Conclusiones}
+	
+	\begin{enumerate}
+		\item La función $f(x,y) = -200 e^{-0.02\sqrt{x^{2}+y^{2}+1}}$ es de clase \(C^{2}\), acotada, radialmente simétrica y estrictamente creciente. 
+		Presenta un único punto crítico en \((0,0)\), el cual es un mínimo global, y supremo $0$ no alcanzado para \(\|(x,y)\|\to\infty\).
+		
+		\item El análisis del Hessiano evidencia convexidad local pero no global, por lo que la superficie es cuasi–convexa. 
+		Esta propiedad garantiza que los métodos de descenso convergen al mínimo desde cualquier punto inicial, aunque la 
+		velocidad de convergencia depende de la magnitud del gradiente.
+		
+		\item El método de gradiente descendente ofrece robustez y simplicidad con convergencia global, aunque lenta en regiones planas. 
+		El método de Newton y sus variantes quasi–Newton (BFGS, DFP) proporcionan convergencia superlineal o cuadrática en la 
+		vecindad del mínimo, siendo más eficientes localmente pero más costosos computacionalmente.
+		
+		\item La función analizada constituye un caso ideal para validar experimentalmente el comportamiento teórico de los algoritmos 
+		clásicos de optimización no lineal, ya que combina suavidad, simetría y un mínimo global único sin irregularidades locales.
+		
+		\item Se confirmó empíricamente que la elección híbrida —gradiente descendente en las fases iniciales y quasi–Newton en el refinamiento local—
+		representa la estrategia más eficiente para la función estudiada y para superficies de estructura similar.
+	\end{enumerate}
+	
+	
 	
 	
 	\begin{thebibliography}{9}

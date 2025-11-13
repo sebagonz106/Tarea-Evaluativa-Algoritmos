@@ -21,3 +21,5 @@
 \contentsline {subsection}{\numberline {3.1}Método de máximo descenso}{11}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Método de Newton}{12}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Comparación}{13}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Discusión de resultados}{13}{section.4}%
+\contentsline {section}{\numberline {5}Conclusiones}{13}{section.5}%

@@ -50,7 +50,7 @@ Tarea-Evaluativa-Algoritmos/
 
 1. Graficación: superficie 3D y curvas de nivel con mapa de calor.
 2. Algoritmos: implementación de Descenso por Gradiente y BFGS (ambos con Armijo) con docstrings y comentarios.
-3. Justificación de Armijo: motivos teóricos/prácticos y rango típico de parámetros.
+3. ALgoritmo híbrido.
 4. Trayectorias: recorrido de ambos métodos sobre los contornos desde un punto inicial dado.
 5. Experimentos masivos: lanzamientos aleatorios en [-100,100]²; los resultados se guardan en `code/tests/results_*.json`.
 6. Tuning de hiperparámetros: barrido (alpha_init, beta, sigma, tol) para GD y BFGS; se generan `param_sweep_summary_*.json` y `param_sweep_detail_*.json`.
