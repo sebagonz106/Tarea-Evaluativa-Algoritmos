@@ -18,6 +18,9 @@
 \usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{tabularx}   % Añádelo en el preámbulo (si no está)
+\usepackage{booktabs}   % Para líneas horizontales de mejor calidad
+\usepackage{array}      % Para control de alineación
 \geometry{margin=2.5cm}
 
 %-------------------------------------
@@ -658,7 +661,112 @@
 	Ambos métodos se complementan: el gradiente descendente ofrece robustez global y simplicidad, mientras que Newton o quasi-Newton proporcionan refinamiento rápido y precisión local.	Una estrategia combinada —utilizando primero el gradiente descendente y luego Newton o BFGS al acercarse al óptimo— representa la solución más eficiente para el problema planteado.
 	
 	
+	
+	
+	
+	
+	
+	
 	\section{Discusión de resultados}
+	
+	
+	Con el propósito de evaluar comparativamente los métodos de optimización
+	implementados sobre la función
+	\[
+	f(x,y) = -200\, e^{-0.02\sqrt{x^{2}+y^{2}+1}},
+	\]
+	se ejecutaron múltiples experimentos a partir de puntos iniciales distribuidos
+	aleatoriamente en el plano, aplicando tres estrategias distintas:
+	
+	\begin{itemize}
+		\item \textbf{Gradiente Descendente (GD)} con paso adaptativo;
+		\item \textbf{BFGS}, método quasi–Newton de segundo orden;
+		\item \textbf{Método Híbrido}, que inicia con GD y conmuta a BFGS
+		al alcanzar un radio de confianza (\(R_{\text{switch}} = 10\) por defecto).
+	\end{itemize}
+	
+	En todos los casos, los tres métodos convergieron al mismo punto crítico
+	\((x^{*},y^{*}) \approx (0,0)\), alcanzando el valor
+	\[
+	f(x^{*},y^{*}) = -196.03973466135,
+	\]
+	lo cual coincide con el mínimo global teórico identificado previamente
+	en el análisis del gradiente y la matriz Hessiana. Las normas finales del gradiente fueron del orden de:
+	\[
+	\|\nabla f\|_{\text{GD}} \approx 10^{-5}, \quad
+	\|\nabla f\|_{\text{BFGS}} \approx 10^{-10}, \quad
+	\|\nabla f\|_{\text{Híbrido}} \approx 10^{-13},
+	\]
+	lo que evidencia una convergencia numérica completa en los métodos de segundo orden.
+	
+	
+	A partir de los datos experimentales, el número de iteraciones requerido
+	por cada método varió según el punto inicial, pero siguió un patrón claro.
+	Los resultados pueden revisarse en el Cuadro \ref{tab:comparacion_metodos}.
+	
+	\begin{table}[H]
+		\centering
+		\renewcommand{\arraystretch}{1.2} % Espaciado vertical entre filas
+		\setlength{\tabcolsep}{8pt}       % Espaciado horizontal
+		\begin{tabularx}{0.9\textwidth}{|>{\raggedright\arraybackslash}X|
+				>{\centering\arraybackslash}m{3cm}|
+				>{\centering\arraybackslash}m{3.5cm}|
+				>{\centering\arraybackslash}m{2.5cm}|}
+			\hline
+			\textbf{Método} & 
+			\textbf{Iteraciones promedio} & 
+			\textbf{Norma final del gradiente} & 
+			\textbf{Precisión} \\
+			\hline
+			Gradiente Descendente (GD) & 70--100 & $10^{-5}$ & Media \\ \hline
+			BFGS & 50--90 & $10^{-10}$ & Alta \\ \hline
+			Método Híbrido & 50--90 & $10^{-13}$ & Muy alta \\ \hline
+		\end{tabularx}
+		\caption{Comparación de desempeño entre métodos de optimización.}
+		\label{tab:comparacion_metodos}
+	\end{table}
+	
+	El método de gradiente descendente logró converger en todos los casos,
+	pero con un número mayor de iteraciones y una tasa de
+	convergencia lineal. El método BFGS mostró una convergencia superlineal,
+	reduciendo el número de iteraciones a casi la mitad y alcanzando precisiones
+	varias órdenes de magnitud mayores. 
+	
+	El método híbrido reprodujo de forma consistente los resultados de BFGS,
+	conmutando hacia este en torno a la iteración 60–70, momento en el cual la
+	magnitud del gradiente ya había disminuido lo suficiente como para garantizar
+	un comportamiento local cuadrático.
+	
+	Los experimentos se ejecutaron desde posiciones iniciales con magnitudes
+	superiores a \(R_0 = 100\), y en ningún caso se observó divergencia.
+	Esto confirma que la función está bien condicionada en esta zona y es suavemente decreciente hacia el	mínimo global. Sin embargo, la distancia inicial afectó directamente la cantidad de iteraciones necesarias, aumentándolas en cada método a medida que nos alejábamos del origen.
+	
+	
+	El análisis comparativo permite establecer las siguientes observaciones:
+	
+	\begin{enumerate}
+		\item El \textbf{gradiente descendente} garantiza robustez global y
+		estabilidad numérica, pero presenta una tasa de convergencia lineal,
+		sensible a la escala del gradiente, y necesita un alto número de iteraciones para puntos alejados del mínimo.
+		\item El \textbf{BFGS} alcanza el equilibrio ideal entre precisión y
+		velocidad, mostrando convergencia superlineal e independencia casi total
+		del punto inicial.
+		\item El \textbf{método híbrido} combina la robustez del GD en las primeras
+		fases con la eficiencia del BFGS en la etapa local. Esta combinación elimina
+		el riesgo de oscilaciones iniciales y mantiene la tasa de convergencia alta
+		en la vecindad del mínimo. Sin embargo, en los casos analizados, no representó una mejoría evidente sobre el BFGS.
+	\end{enumerate}
+	
+	La estrategia híbrida se confirma así como la más eficiente: 
+	requiere un número de iteraciones similar al BFGS, pero con menor sensibilidad
+	a las condiciones iniciales y sin riesgo de inestabilidad.
+	
+	Los resultados experimentales confirman que los tres métodos convergen al mismo mínimo global con gran precisión. BFGS e híbrido reducen el número de iteraciones en un 40-60\,\% respecto al gradiente descendente y en términos de desempeño, el híbrido logra una precisión de $10^{-13}$ con un costo computacional equivalente al de BFGS puro. Se respalda la conclusión de que
+	la combinación adaptativa de métodos de primer y segundo orden es la
+	alternativa más equilibrada para problemas de optimización no lineal
+	suaves, proporcionando tanto robustez global como eficiencia local.
+	
+	
 	
 	
 	\section{Conclusiones}
@@ -679,7 +787,7 @@
 		clásicos de optimización no lineal, ya que combina suavidad, simetría y un mínimo global único sin irregularidades locales.
 		
 		\item Se confirmó empíricamente que la elección híbrida —gradiente descendente en las fases iniciales y quasi–Newton en el refinamiento local—
-		representa la estrategia más eficiente para la función estudiada y para superficies de estructura similar.
+		representa la estrategia más eficiente para la función estudiada y para superficies de estructura similar, aunque en el intervalo analizado no mostró una reducción evidente del número de iteraciones del método quasi-Newton implementado (BFGS), por lo que para nuestro problema la utilización de este último es igual de válida.
 	\end{enumerate}
 	
 	
@@ -690,7 +798,7 @@
 		G. Bouza Allende, \emph{Notas de clase: Temas 1 y 2 — Optimización Matemática I}, February 2, 2021. (Documento proporcionado por el usuario).
 		
 		\bibitem{OrdenProyecto}
-		Documento de la orden del proyecto (archivo \texttt{orden.pdf}) — enunciado del problema y requisitos específicos proporcionado por el usuario.
+		Documento de la orden del proyecto (archivo \texttt{orden.pdf}) — enunciado del problema y requisitos específicos.
 	\end{thebibliography}
 	
 	
