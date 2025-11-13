@@ -697,7 +697,31 @@
 	\|\nabla f\|_{\text{BFGS}} \approx 10^{-10}, \quad
 	\|\nabla f\|_{\text{Híbrido}} \approx 10^{-13},
 	\]
-	lo que evidencia una convergencia numérica completa en los métodos de segundo orden.
+	lo que evidencia una convergencia numérica completa (Figura \ref{fig:puntualSol}).
+	
+	\begin{figure}[H]
+		\centering
+		
+		% --- Subfigura (a) ---
+		\begin{subfigure}[b]{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{convergePath90.-80.png}
+			\caption{Camino seguido por los métodos en su búsqueda del mínimo.}
+			\label{fig:convPath}
+		\end{subfigure}
+		\hfill
+		% --- Subfigura (b) ---
+		\begin{subfigure}[b]{0.5\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{convergeComp90.-80.png}
+			\caption{Convergencia del valor obtenido en cada iteración.}
+			\label{fig:convComp}
+		\end{subfigure}
+		
+		% --- Leyenda general de la figura ---
+		\caption{Análisis en el punto $(90,-80)$.}
+		\label{fig:puntualSol}
+	\end{figure}
 	
 	
 	A partir de los datos experimentales, el número de iteraciones requerido
@@ -730,12 +754,36 @@
 	pero con un número mayor de iteraciones y una tasa de
 	convergencia lineal. El método BFGS mostró una convergencia superlineal,
 	reduciendo el número de iteraciones a casi la mitad y alcanzando precisiones
-	varias órdenes de magnitud mayores. 
-	
-	El método híbrido reprodujo de forma consistente los resultados de BFGS,
+	varias órdenes de magnitud mayores. El método híbrido reprodujo de forma consistente los resultados de BFGS,
 	conmutando hacia este en torno a la iteración 60–70, momento en el cual la
 	magnitud del gradiente ya había disminuido lo suficiente como para garantizar
-	un comportamiento local cuadrático.
+	un comportamiento local cuadrático (Figura \ref{fig:comp500}).
+	
+	
+	\begin{figure}[H]
+		\centering
+		
+		% --- Subfigura (a) ---
+		\begin{subfigure}[b]{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{massComp500.png}
+			\caption{Cajas y bigotes.}
+			\label{fig:compData}
+		\end{subfigure}
+		\hfill
+		% --- Subfigura (b) ---
+		\begin{subfigure}[b]{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{massIter500.png}
+			\caption{Iteraciones vs. Radio inicial}
+			\label{fig:compIter}
+		\end{subfigure}
+		
+		% --- Leyenda general de la figura ---
+		\caption{Gráficos producidos tras realizar 500 experimentos con puntos aleatorios en $[-100,100]^2$.}
+		\label{fig:comp500}
+	\end{figure}
+	
 	
 	Los experimentos se ejecutaron desde posiciones iniciales con magnitudes
 	superiores a \(R_0 = 100\), y en ningún caso se observó divergencia.
@@ -768,7 +816,7 @@
 	
 	
 	
-	
+	\newpage
 	\section{Conclusiones}
 	
 	\begin{enumerate}
