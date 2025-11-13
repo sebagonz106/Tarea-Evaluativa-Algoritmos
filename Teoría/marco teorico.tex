@@ -13,6 +13,11 @@
 \usepackage{enumitem}
 \usepackage{microtype}
 \usepackage{enumitem}
+\usepackage{graphicx}
+\graphicspath{{img/}}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
 \geometry{margin=2.5cm}
 
 %-------------------------------------
@@ -55,7 +60,7 @@
 	Puede hablarse a su vez de condiciones suficientes de optimalidad; o sea, condiciones que de cumplirse por un punto sería óptimo. En el caso irrestricto, si \(\nabla f(x^\ast)=0\) y \(\nabla^2 f(x^\ast)\) es definida positiva, entonces \(x^\ast\) es mínimo local. En problemas convexos, puede afirmarse además que cualquier punto que satisfaga la condición de KKT será óptimo global.
 	
 	
-	\subsection{Principales familias de algoritmos}
+	\subsection{Algoritmos}
 	
 	\subsubsection{Métodos por direcciones (línea de búsqueda)}
 	El esquema general está dado por:
@@ -66,108 +71,60 @@
 	\begin{itemize}[nosep]
 		\item \emph{Gradiente descendente (steepest descent):} \(d_k=-\nabla f(x_k)\). Orden de convergencia lineal en general.
 		\item \emph{Newton:} \(d_k=-[\nabla^2 f(x_k)]^{-1}\nabla f(x_k)\). Requiere Hessiana y su orden de convergencia es cuasi-cuadrático local si la Hessiana es definida positiva cerca del óptimo. Debido a la necesidad del cálculo de la inversa de la Hessiana, no es recomendable para matrices mal condicionadas.
-		\item \emph{Quasi-Newton (BFGS, DFP):} Aproximan la inversa de la Hessiana con convergencia superlineal típica, lo que los hace buena práctica numérica para problemas grandes.
+		\item \emph{Quasi-Newton (BFGS, DFP):} Aproximan la inversa de la Hessiana con convergencia superlineal típica, lo que los hace buena práctica numérica para problemas grandes. La forma general del vector direcctor es \(d_k = - H_k \nabla f(x_k)\)
+		donde \(H_k\) es una matriz simétrica definida positiva que se actualiza en cada iteración y garantiza que se aproxime correctamente la curvatura local del gradiente entre \(x_k\) y \(x_{k+1}\).
 	\end{itemize}
 	
-	\subsection{Direcciones de búsqueda en los métodos quasi--Newton}
+	\qquad\qquad\qquad\qquad
 	
-	Los métodos \emph{quasi--Newton} buscan aproximar la dirección de Newton sin calcular de forma explícita la matriz Hessiana ni su inversa en cada iteración.  
-	En el método de Newton puro,
+	El método DFP (Davidon-Fletcher-Powell) actualiza directamente la aproximación de la inversa de la Hessiana \(H_k\) mediante:
 	\[
-	d_k = - \big[\nabla^2 f(x_k)\big]^{-1} \nabla f(x_k).
-	\]
-	Los métodos quasi--Newton reemplazan la inversa de la Hessiana por una matriz aproximada \(B_k\) o su inversa \(H_k \approx (\nabla^2 f(x_k))^{-1}\), actualizada iterativamente a partir de información del gradiente.  
-	
-	\paragraph{Forma general de la dirección}
-	En todos los métodos quasi--Newton,
-	\[
-	\boxed{\; d_k = - H_k \nabla f(x_k), \;}
-	\]
-	donde \(H_k\) es una matriz simétrica definida positiva que se actualiza en cada iteración mediante la condición de \emph{secante}:
-	\[
-	H_{k+1} y_k = s_k,
-	\qquad
-	s_k = x_{k+1}-x_k, \quad
-	y_k = \nabla f(x_{k+1})-\nabla f(x_k).
-	\]
-	La condición de secante garantiza que \(H_{k+1}\) aproxima correctamente la curvatura local del gradiente entre \(x_k\) y \(x_{k+1}\).
-	
-	\subsubsection*{Actualización DFP (Davidon--Fletcher--Powell)}
-	El método DFP actualiza directamente la aproximación de la \emph{inversa de la Hessiana} \(H_k\) mediante:
-	\[
-	\boxed{
 		H_{k+1}
 		= H_k
 		+ \frac{s_k s_k^{\top}}{s_k^{\top} y_k}
-		- \frac{H_k y_k y_k^{\top} H_k}{y_k^{\top} H_k y_k}.
-	}
+		- \frac{H_k y_k y_k^{\top} H_k}{y_k^{\top} H_k y_k}, 
+		\quad
+		s_k = x_{k+1}-x_k, \quad
+		y_k = \nabla f(x_{k+1})-\nabla f(x_k).
 	\]
-	Entonces la dirección de búsqueda se obtiene como:
-	\[
-	\boxed{
-		d_k^{\mathrm{DFP}} = - H_k \nabla f(x_k).
-	}
-	\]
-	La actualización DFP mantiene \(H_k\) simétrica y definida positiva si \(s_k^{\top} y_k>0\).
 	
-	\subsubsection*{Actualización BFGS (Broyden--Fletcher--Goldfarb--Shanno)}
-	El método BFGS es el más utilizado en la práctica por su mayor estabilidad numérica. Su actualización es:
+	
+	Esta actualización mantiene \(H_k\) simétrica y definida positiva siempre que \(s_k^{\top} y_k>0\).
+	
+	
+	\qquad\qquad\qquad\qquad
+	
+	
+	El método BFGS (Broyden-Fletcher-Goldfarb-Shanno) es el más utilizado en la práctica por su mayor estabilidad numérica. Su actualización es:
 	\[
-	\boxed{
 		H_{k+1}
 		= \left(I - \frac{s_k y_k^{\top}}{y_k^{\top} s_k}\right)
 		H_k
 		\left(I - \frac{y_k s_k^{\top}}{y_k^{\top} s_k}\right)
-		+ \frac{s_k s_k^{\top}}{y_k^{\top} s_k}.
-	}
+		+ \frac{s_k s_k^{\top}}{y_k^{\top} s_k}
 	\]
-	La dirección de búsqueda se define igual:
-	\[
-	\boxed{
-		d_k^{\mathrm{BFGS}} = - H_k \nabla f(x_k).
-	}
-	\]
+
+
 	También se puede expresar en términos de la aproximación de la Hessiana \(B_k = H_k^{-1}\).  
-	En ese caso, la actualización equivalente es:
+	En ese caso, la actualización equivalente, y nótese su similitud con la forma de $H_k$ en DFP, es:
 	\[
-	\boxed{
 		B_{k+1}
 		= B_k
 		+ \frac{y_k y_k^{\top}}{y_k^{\top} s_k}
-		- \frac{B_k s_k s_k^{\top} B_k}{s_k^{\top} B_k s_k}.
-	}
+		- \frac{B_k s_k s_k^{\top} B_k}{s_k^{\top} B_k s_k}
 	\]
 	y la dirección de búsqueda resulta de resolver:
 	\[
-	\boxed{
 		B_k d_k = -\nabla f(x_k),
 		\quad \text{o equivalentemente } \;
 		d_k = -B_k^{-1}\nabla f(x_k) = -H_k\nabla f(x_k).
-	}
 	\]
 	
-	\paragraph{Resumen comparativo}
-	\begin{center}
-		\begin{tabular}{|c|c|c|}
-			\hline
-			\textbf{Método} & \textbf{Actualiza} & \textbf{Dirección de búsqueda}\\
-			\hline
-			DFP & \(H_{k+1}=H_k+\frac{s s^{\top}}{s^{\top}y}-\frac{H y y^{\top} H}{y^{\top} H y}\) & \(d_k=-H_k\nabla f(x_k)\)\\
-			\hline
-			BFGS & \(H_{k+1}=(I-\frac{s y^{\top}}{y^{\top}s})H_k(I-\frac{y s^{\top}}{y^{\top}s})+\frac{s s^{\top}}{y^{\top}s}\) & \(d_k=-H_k\nabla f(x_k)\)\\
-			\hline
-		\end{tabular}
-	\end{center}
 	
-	\paragraph{Propiedades principales}
-	\begin{itemize}[nosep]
-		\item Si \(H_0\) es simétrica y definida positiva y \(s_k^{\top}y_k>0\) para todo \(k\), entonces \(H_k\) conserva esas propiedades.
-		\item El método BFGS con búsqueda lineal que satisface las condiciones de Wolfe garantiza convergencia superlineal.
-		\item El costo computacional por iteración es \(O(n^2)\), mucho menor que el \(O(n^3)\) del método de Newton exacto.
-	\end{itemize}
+	En estos métodos quasi-newton, si \(H_0\) es simétrica y definida positiva y \(s_k^{\top}y_k>0\) para todo \(k\), entonces \(H_k\) conserva esas propiedades. Además, el costo computacional por iteración es \(O(n^2)\), mucho menor que el \(O(n^3)\) del método de Newton exacto.
 	
 	
-	\subsection{Selección del tamaño de paso: condiciones de Armijo y de Wolfe}
+	\subsubsection{Selección del tamaño de paso: condiciones de Armijo y de Wolfe}
 	
 	En los métodos de optimización de tipo búsqueda en línea, la iteración tiene la forma
 	\[
@@ -176,29 +133,18 @@
 	donde \(d_k\) es una dirección de descenso (\(\nabla f(x_k)^{\top} d_k < 0\)) y \(\alpha_k>0\) es el tamaño de paso.  
 	La elección adecuada de \(\alpha_k\) es fundamental para garantizar la \emph{convergencia global} y la eficiencia del algoritmo.
 	
-	\subsubsection*{Condición de Armijo (descenso suficiente)}
-	
 	La \textbf{condición de Armijo}, también llamada \emph{criterio de descenso suficiente}, establece que el nuevo punto debe producir una reducción suficiente en la función objetivo.  
 	Se define un parámetro \(c_1\in(0,1)\) (típicamente \(c_1\approx10^{-4}\)) y se busca un \(\alpha_k>0\) tal que:
 	\[
-	\boxed{
 		f(x_k + \alpha_k d_k)
 		\le
 		f(x_k) + c_1 \alpha_k \, \nabla f(x_k)^{\top} d_k.
-	}
 	\]
-	Esta desigualdad garantiza que el decremento real en \(f\) es al menos una fracción \(c_1\) del decremento predicho por el modelo lineal \(f(x_k) + \alpha_k \nabla f(x_k)^{\top} d_k\).
+	Esta desigualdad garantiza que el decremento real en \(f\) es al menos una fracción \(c_1\) del decremento predicho por el modelo lineal \(f(x_k) + \alpha_k \nabla f(x_k)^{\top} d_k\). Si la condición no se cumple, el paso se reduce (por ejemplo multiplicándolo por un factor \(\beta\in(0,1)\)) hasta satisfacerla. Este procedimiento se conoce como \emph{backtracking line search}.
 	
-	\paragraph{Interpretación:}  
-	Si la condición no se cumple, el paso es demasiado grande; se reduce \(\alpha_k\) (por ejemplo multiplicándolo por un factor \(\beta\in(0,1)\)) hasta satisfacerla.  
-	Este procedimiento se conoce como \emph{backtracking line search}.
+	\qquad \qquad \qquad \qquad
 	
-	\subsubsection*{Condiciones de Wolfe}
-	
-	Para obtener convergencia más robusta, especialmente en métodos de Newton y quasi--Newton, se utilizan las \textbf{condiciones de Wolfe}, que añaden un control de curvatura además del descenso suficiente.
-	
-	Se definen dos parámetros \(0 < c_1 < c_2 < 1\) (por ejemplo \(c_1=10^{-4},\; c_2=0.9\)).  
-	El valor de \(\alpha_k\) debe satisfacer simultáneamente:
+	Sin embargo, para obtener convergencia más robusta, especialmente en métodos de Newton y quasi--Newton, se utilizan las \textbf{condiciones de Wolfe}, que añaden un control de curvatura además del descenso suficiente. Se definen dos parámetros \(0 < c_1 < c_2 < 1\) (por ejemplo \(c_1=10^{-4},\; c_2=0.9\)) tales que el valor de \(\alpha_k\) debe satisfacer simultáneamente:
 	
 	\begin{align}
 		\text{(Condición de Armijo)} 
@@ -211,118 +157,96 @@
 	
 	La primera (\ref{eq:Wolfe1}) es idéntica a la de Armijo; la segunda (\ref{eq:Wolfe2}) asegura que el gradiente se haya reducido suficientemente en la dirección \(d_k\), evitando pasos demasiado pequeños.
 	
-	\subsubsection*{Condiciones de Wolfe fuertes}
+		\qquad \qquad \qquad \qquad
+
+	Las condiciones de Armijo garantizan \emph{descenso global}, pero pueden generar pasos demasiado pequeños, mientras que las de Wolfe balancean descenso y curvatura, promoviendo convergencia superlineal cuando se combinan con BFGS o DFP. Existen algoritmos eficientes para encontrar \(\alpha_k\) que cumpla ambas condiciones (por búsqueda por intervalos o interpolación cuadrática/cúbica).
 	
-	Una variante frecuente son las \textbf{condiciones de Wolfe fuertes}, en las que la segunda desigualdad se reemplaza por:
-	\[
-	\boxed{
-		\left| \nabla f(x_k + \alpha_k d_k)^{\top} d_k \right|
-		\le c_2 \left| \nabla f(x_k)^{\top} d_k \right|.
-	}
-	\]
-	Esto impone una curvatura "moderada" en el punto nuevo y suele mejorar la estabilidad en métodos quasi--Newton.
-	
-	\subsubsection*{Propiedades y observaciones}
-	\begin{itemize}[nosep]
-		\item Las condiciones de Armijo garantizan \emph{descenso global}, pero pueden generar pasos demasiado pequeños.
-		\item Las condiciones de Wolfe (o Wolfe fuertes) balancean descenso y curvatura, promoviendo convergencia superlineal cuando se combinan con BFGS o DFP.
-		\item Existen algoritmos eficientes para encontrar \(\alpha_k\) que cumpla ambas condiciones (por búsqueda por intervalos o interpolación cuadrática/cúbica).
-		\item Bajo hipótesis estándar (\(f\) continuamente diferenciable y \(d_k\) de descenso), siempre existe un \(\alpha_k>0\) que satisface las condiciones de Wolfe.
-	\end{itemize}
-	
-	
-	\paragraph{Longitud de paso (line search):}
-	Criterios Armijo y Wolfe para garantizar descenso suficiente y estabilidad.
 	
 	\subsubsection{Métodos de región de confianza (trust-region)}
 	En vez de buscar en una dirección y hacer line search, se resuelve en cada iteración un subproblema:
 	\[
 	\min_{\|d\|\le \Delta_k} m_k(d) = f(x_k) + \nabla f(x_k)^T d + \tfrac12 d^T B_k d,
 	\]
-	donde \(B_k\) es una aproximación de la Hessiana. Ventajas: robustez en presencia de Hessianas indefinidas; buen comportamiento global.
+	donde \(B_k\) es una aproximación de la Hessiana. Este método es robusto en presencia de Hessianas indefinidas y mantiene un buen comportamiento global.
 	
 	\subsubsection{Métodos para problemas con restricciones}
-	Tres familias principales:
 	\begin{itemize}[nosep]
-		\item \textbf{Métodos de penalidad:} transformar restricciones en términos de penalización \(f(x)+\rho P(x)\) con \(\rho\to\infty\). Simples pero pueden inducir condicionamiento pobre y números grandes.
-		\item \textbf{Métodos de barrera (interior-point):} aproximar restricciones mediante funciones-barrier y resolver secuencia de problemas suaves con parámetro \(\mu\to 0^+\). Muy usados en problemas grandes y convexos.
-		\item \textbf{Métodos de tipo SQP (Sequential Quadratic Programming):} en cada iteración se resuelve un QP que aproxima el problema original. Orden de convergencia: cuadrático bajo condiciones regulares. Muy efectivos en restricciones suaves y de dimensión moderada.
-		\item \textbf{Métodos de Lagrangianos aumentados (Augmented Lagrangian):} combinan penalidad y estimación de multiplicadores; robustos frente a problemas de condicionamiento.
+		\item \emph{Métodos de penalidad:} Transforman restricciones en términos de penalización \(f(x)+\rho P(x)\) con \(\rho\to\infty\). Son simples y fáciles de implementar, pero pueden inducir condicionamiento pobre y números grandes.
+		\item \emph{Métodos de barrera:} Aproximan restricciones mediante funciones barrera y resuelven una secuencia de problemas suaves con parámetro \(\mu\to 0^+\). Son muy usados en problemas grandes y convexos.
+		\item \emph{Métodos de tipo SQP (Sequential Quadratic Programming):} en cada iteración se resuelve un QP que aproxima el problema original. El orden de convergencia es cuadrático bajo condiciones regulares y son muy efectivos en restricciones suaves y de dimensión moderada.
 	\end{itemize}
 	
-	\subsection{Convergencia: órdenes y condiciones}
-	\begin{itemize}[nosep]
-		\item \textbf{Convergencia lineal:} \( \|x_{k+1}-x^\ast\| \le c \|x_k-x^\ast\|\) con \(0<c<1\).
-		\item \textbf{Convergencia superlineal:} razón que tiende a 0.
-		\item \textbf{Convergencia cuadrática:} rápida (p.ej. Newton cerca del óptimo cuando Hessiana es Lipschitz y definida positiva).
-		\item La convergencia global suele requerir estrategias de globalización (line search o trust region) combinadas con condiciones de curvatura.
-	\end{itemize}
-	
-	\subsection{Criterios de parada y métricas numéricas}
-	Criterios típicos:
+
+	\subsubsection{Criterios de parada típicos y métricas numéricas}
 	\begin{itemize}[nosep]
 		\item \(\|\nabla f(x_k)\| < \varepsilon_{\text{grad}}\).
 		\item \(\|x_{k+1}-x_k\| < \varepsilon_{\text{step}}\).
-		\item Violación de factibilidad (norma de restricciones violadas) por debajo de tolerancia.
 		\item Número máximo de iteraciones o evaluaciones de función.
 	\end{itemize}
 	
-	\subsection{Consideraciones numéricas y prácticas}
-	\begin{itemize}[nosep]
-		\item \textbf{Escalado}: importante para estabilidad numérica. Reescalar variables y restricciones cuando las magnitudes difieren mucho.
-		\item \textbf{Condicionamiento}: Hessianas mal condicionadas afectan métodos de Newton y Quasi-Newton; precondicionamiento o regularización pueden ser necesarios.
-		\item \textbf{Cálculo de derivadas}: derivadas exactas (analíticas) cuando sean posibles; si se usan diferencias finitas, elegir paso apropiado y considerar el coste.
-		\item \textbf{Tratamiento de restricciones activas}: detección de índices activos y manejo cuidadoso de la complementariedad para evitar oscilaciones numéricas.
-		\item \textbf{Robustez}: combinar métodos (p.ej. pasar de método robusto de descenso a SQP o Newton local cerca del óptimo) suele ser la práctica recomendada.
-	\end{itemize}
+	
+	
+
+
+
 	
 	
 	
+	\section{Análisis de la función}
+	Se considera la función
+	\[
+	f(x,y) = -200\,e^{-0.02\sqrt{x^{2}+y^{2}+1}},\qquad (x,y)\in\mathbb{R}^2.
+	\]
 	
+	Definiendo \(	s_1(x,y):=\sqrt{x^{2}+y^{2}+1},   \) la función \(s_1\) es de clase \(C^2\) en \(\mathbb{R}^2\) (no hay singularidades porque \(x^2+y^2+1\ge 1\), manteniendo siempre definidas \(s_1\) y \(s_1'\)). Como la composición de funciones \(C^2\) es \(C^2\), sabiendo que \(s_2(x) := e^x\) y \(\forall a \in \mathbb{R}: s_3(x) := a x\) son \(C^2\), se tiene
+	\[
+	f\in C^2(\mathbb{R}^2).
+	\]
+	En particular, \(f\) es continua y diferenciable de todas las órdenes en todo \(\mathbb{R}^2\).
 	
-	
-	
-	
-	\section{Gradiente}
-	Queremos calcular \(\nabla f=(\partial_x f,\partial_y f)^\top\).
-	
-	Empezamos observando la derivada de \(s\):
+	Si quisieramos calcular \(\nabla f=(\partial_x f,\partial_y f)^\top\). Podemos empezar observando que la derivada de \(s\) cumple al apllicar la regla de la cadena:
 	\[
 	\frac{\partial s}{\partial x} = \frac{x}{s},\qquad
 	\frac{\partial s}{\partial y} = \frac{y}{s},
 	\]
-	pues \(s=\sqrt{x^{2}+y^{2}+1}\) y aplicamos la regla de la cadena.
 	
-	Ahora aplicamos la regla de la cadena a \(f(x,y)=-200 e^{-0.02 s}\):
+	Pasando a \(f\) y aplicando nuevamente la regla de la cadena tenemos:
 	\[
-	\frac{\partial f}{\partial x} = -200 \cdot e^{-0.02 s}\cdot(-0.02)\cdot\frac{\partial s}{\partial x}
-	= (-200)(-0.02)\, e^{-0.02 s}\cdot\frac{x}{s}.
+	\frac{\partial f}{\partial x}
+	= \frac{\partial f}{\partial s} \frac{\partial s}{\partial x}
+	=-200\cdot(-0.02)\,e^{-0.02 s}\cdot\frac{\partial s}{\partial x}
+	=4\,e^{-0.02 s}\frac{x}{s},
 	\]
-	Calculamos el factor numérico \((-200)(-0.02)=4\). Por tanto
+	y análogamente, dada la simetría de la función:
 	\[
-	\boxed{\ \frac{\partial f}{\partial x} = 4\, e^{-0.02 s}\,\frac{x}{s}\ }.
+	\frac{\partial f}{\partial y}
+	=\frac{\partial f}{\partial s} \frac{\partial s}{\partial y}
+	=4\,e^{-0.02 s}\frac{y}{s}.
 	\]
-	De forma análoga,
+	Por tanto, podemos escribir el gradiente de forma compacta como
 	\[
-	\boxed{\ \frac{\partial f}{\partial y} = 4\, e^{-0.02 s}\,\frac{y}{s}\ }.
-	\]
-	
-	Por lo tanto el gradiente queda
-	\[
-	\boxed{\ \nabla f(x,y)=4\, e^{-0.02 s}\,\frac{1}{s}\begin{pmatrix} x\\[4pt] y\end{pmatrix}
-		\ }.
+	\nabla f(x,y)=\frac{4e^{-0.02 s}}{s}\begin{pmatrix} x\\[4pt] y\end{pmatrix}.
 	\]
 	
-	\section{Hessiana}
-	Denotaremos \(g(x,y):=4\, e^{-0.02 s}\) y \(v(x,y):=\dfrac{1}{s}\begin{pmatrix}x\\ y\end{pmatrix}\),
-	de modo que \(\nabla f = g\, v\). Para la Hessiana \(H=\nabla^{2}f\) usamos la regla del producto matricial:
+	\subsection{Puntos críticos}
+	Las ecuaciones críticas \(\nabla f(x,y)=0_2\) conducen a
 	\[
-	H = (\nabla g)\,v^{\top} + g\,\nabla v.
+	\frac{4e^{-0.02 r}}{r}x=0,\qquad \frac{4e^{-0.02 r}}{r}y=0.
 	\]
-	Calculamos los términos por separado.
+	Dado que \(\forall (x,y) \in \mathbb{R}^2: \dfrac{4e^{-0.02 r}}{r}>0\), la única solución posible es:
+	\[
+	(x,y)=(0,0).
+	\]
+	Por tanto, el único punto crítico existente en \(\mathbb{R}^2\) es el origen.
 	
-	\subsection*{Derivadas de \(g\)}
-	Recordando \(g=4 e^{-0.02 s}\),
+	\subsection{Hessiano y clasificación del punto crítico}
+	
+	Si denotamos \(g(x,y):=4\, e^{-0.02 s}\) y \(v(x,y):=\dfrac{1}{s}\begin{pmatrix}x\\ y\end{pmatrix}\),
+	tendremos que \(\nabla f = g\, v\). Para la Hessiana \(H=\nabla^{2}f\) usamos la regla del producto matricial: \( H = (\nabla g)\,v^{\top} + g\,\nabla v. \)
+	Calcularemos los términos por separado.
+	
+	\subsubsection*{Derivadas de \(g\)}
+	
 	\[
 	\frac{\partial g}{\partial x} = 4 \cdot e^{-0.02 s}\cdot(-0.02)\cdot\frac{\partial s}{\partial x}
 	= -0.08\, e^{-0.02 s}\,\frac{x}{s},
@@ -336,10 +260,7 @@
 	\nabla g = -0.08\, e^{-0.02 s}\,\frac{1}{s}\begin{pmatrix} x\\[4pt] y\end{pmatrix}.
 	\]
 	
-	\subsection*{Derivadas de \(v\)}
-	Recordemos \(v=(x/s,\; y/s)^{\top}\). Calculemos las componentes de la matriz Jacobiana \(\nabla v\), es decir
-	\(\big(\partial_{j} v_{i}\big)_{i,j=1,2}\).
-	
+	\subsubsection*{Derivadas de \(v\)}
 	Primero derivamos \(v_{1}=x/s\) respecto a \(x\) e \(y\):
 	\[
 	\frac{\partial}{\partial x}\left(\frac{x}{s}\right)
@@ -376,9 +297,9 @@
 	\end{pmatrix}.
 	\]
 	
-	\subsection*{Composición final}
+	\subsubsection*{Composición final}
 	Recordando \(H = (\nabla g)\,v^{\top} + g\,\nabla v\),
-	sustituimos \(\nabla g\), \(v\) y \(g\).
+	sustituimos \(\nabla g\), \(\nabla v\), \(v\) y \(g\).
 	
 	Calculemos primero \((\nabla g)\,v^{\top}\). Dado que
 	\(\nabla g = -0.08\, e^{-0.02 s}\,\dfrac{1}{s}\begin{pmatrix} x\\ y\end{pmatrix}\) y
@@ -403,7 +324,7 @@
 	\begin{pmatrix} y^{2}+1 & -xy\\[6pt] -xy & x^{2}+1\end{pmatrix}
 	\right],
 	\]
-	porque \(-0.08/4 = -0.02\). Si factorizamos \(4 e^{-0.02 s}\) y combinamos términos, una forma compacta y útil es:
+	Si factorizamos \(4 e^{-0.02 s}\) y combinamos términos, una forma compacta y útil es:
 	
 	\[
 	\boxed{\ 
@@ -416,7 +337,8 @@
 	\]
 	donde \(I_{2}\) es la matriz identidad \(2\times 2\).
 	
-	\subsection*{Componentes explícitos}
+	
+	
 	Si se desea ver las componentes explícitas:
 	\begin{align*}
 		\frac{\partial^{2} f}{\partial x^{2}}
@@ -426,130 +348,77 @@
 		\frac{\partial^{2} f}{\partial x\partial y}
 		&=-4 e^{-0.02 s}\,\frac{xy(0.02 s +1)}{s^{3}}.
 	\end{align*}
-	
-	\section*{Observaciones}
-	\begin{itemize}
-		\item La Hessiana está definida en todo \((x,y)\in\mathbb{R}^{2}\) ya que \(s=\sqrt{x^{2}+y^{2}+1}\ge 1>0\).
-		\item Para análisis teórico y numérico, la forma factorizada
-		\[
-		\nabla^{2} f = 4 e^{-0.02 s}\Big(\tfrac{1}{s}I - \tfrac{0.02 s+1}{s^{3}}\, uu^{\top}\Big),
-		\qquad u=\begin{pmatrix}x\\ y\end{pmatrix},
-		\]
-		es conveniente: muestra explícitamente la estructura identidad menos un término de rango 1 escalado por \(uu^{\top}\).
-		\item Cerca del origen (pequeñas \(x,y\)) se puede evaluar la Hessiana sustituyendo \(s\approx 1+\tfrac{1}{2}(x^{2}+y^{2})\) si se desea una aproximación en serie.
-	\end{itemize}
-	
-	
-	
-	
 
-
-
+	Si analizamos la convexidad de la función comprobando que $\nabla^{2} f(x,y)$ es semidefinida positiva veremos que debe cumplirse en:
+	\[
+	\frac{1}{s} I_{2}
+	-\frac{0.02\,s + 1}{s^{3}}
+	\begin{pmatrix} x^{2} & xy \\[4pt] xy & y^{2} \end{pmatrix},
+	\]
+	de donde puede comprobarse que esta propiedad solo se cumple para una bola específica centrada en $(0,0)$, por lo que la convexidad será local y no puede extenderse a todo el dominio, lo cual tiene sentido viendo el comportamiento de la función cuando \(\|(x,y)\|\to\infty\).
 	
 	
-	
-	\section{Análisis de la función}
-	Se considera la función
-	\[
-	f(x,y) = -200\,e^{-0.02\sqrt{x^{2}+y^{2}+1}},\qquad (x,y)\in\mathbb{R}^2.
-	\]
-	
-	\subsection{Regularidad}
-	Definiendo
-	\[
-	s_1(x,y):=\sqrt{x^{2}+y^{2}+1},
-	\]
-	la función \(s_1\) es de clase \(C^2\) en \(\mathbb{R}^2\) (no hay singularidades porque \(x^2+y^2+1\ge 1\), manteniendo siempre definidas \(s_1\) y \(s_1'\)). Como la composición de funciones \(C^2\) es \(C^2\), sabiendo que \(s_2(x) := e^x\) y \(\forall a \in \mathbb{R}: s_3(x) := a x\) son \(C^2\), se tiene
-	\[
-	f\in C^2(\mathbb{R}^2).
-	\]
-	En particular, \(f\) es continua y diferenciable de todas las órdenes en todo \(\mathbb{R}^2\).
-	
-	\subsection{Gradiente}
-	
-	Sea \(r := s_1(x,y)=\sqrt{x^{2}+y^{2}+1}\). Aplicando la regla de la cadena,
-	\[
-	\frac{\partial f}{\partial x}
-	= -200\cdot(-0.02)\,e^{-0.02 r}\cdot\frac{\partial r}{\partial x}
-	=4\,e^{-0.02 r}\frac{x}{r},
-	\]
-	y análogamente, dada la simetría de la función:
-	\[
-	\frac{\partial f}{\partial y}=4\,e^{-0.02 r}\frac{y}{r}.
-	\]
-	Por tanto, podemos escribir el gradiente de forma compacta como
-	\[
-	\nabla f(x,y)=\frac{4e^{-0.02 r}}{r}\begin{pmatrix} x\\[4pt] y\end{pmatrix}.
-	\]
-	
-	\subsection{Puntos críticos}
-	Las ecuaciones críticas \(\nabla f(x,y)=0_2\) conducen a
-	\[
-	\frac{4e^{-0.02 r}}{r}x=0,\qquad \frac{4e^{-0.02 r}}{r}y=0.
-	\]
-	Dado que \(\forall (x,y) \in \mathbb{R}^2: \dfrac{4e^{-0.02 r}}{r}>0\), la única solución posible es:
-	\[
-	(x,y)=(0,0).
-	\]
-	Por tanto, el único punto crítico existente en \(\mathbb{R}^2\) es el origen.
-	
-	\subsection{Hessiano y clasificación del punto crítico}
-
-	Evaluando en el origen \((x,y)=(0,0)\) (donde \(r=1\)) se obtiene el Hessiano
+	\subsubsection*{Clasificación del punto}
+	Evaluando en el origen \((x,y)=(0,0)\) (donde \(s=1\)) se obtiene el Hessiano
 	\[
 	\nabla^2 f(0,0)=4e^{-1/50}\,I\quad\Rightarrow\quad
-	f_{xx}(0,0)=f_{yy}(0,0)=4e^{-1/50},\qquad f_{xy}(0,0)=0,
+	f_{xx}(0,0)=f_{yy}(0,0)=4e^{-1/50},\qquad f_{xy}(0,0)=f_{yx}(0,0)=0,
 	\]
-	con autovalores positivos iguales: \(4e^{-1/50}>0\). Por tanto el punto crítico \((0,0)\) es un \textbf{mínimo local}. 
+	con valores propios positivos iguales: \(4e^{-1/50}>0\). Por tanto el punto crítico \((0,0)\) es un mínimo local. 
 	
-	\subsection{Mínimo global y comportamiento en el infinito}
-	Calculemos valores extremos:
 	\[
 	f(0,0)=-200e^{-0.02\sqrt{0+0+1}}=-200e^{-0.02}\approx -200\cdot 0.98019867\approx -196.0397.
 	\]
-	Para cualquier \((x,y)\) se cumple \(r=\sqrt{x^2+y^2+1}\ge 1\), y la función \(r\mapsto e^{-0.02 r}\) es estrictamente decreciente en \(r\). Por tanto \(f\) alcanza su valor mínimo en \(r\) mínimo, es decir en \((0,0)\). Además, para \(\|(x,y)\|\to\infty\) se tiene \(r\to\infty\) y
+	Para cualquier \((x,y)\) se cumple \(s=\sqrt{x^2+y^2+1}\ge 1\), y la función \(s\mapsto -e^{-0.02 s}\) es estrictamente creciente en \(s\). Por tanto \(f\) alcanza su valor mínimo en \(s\) mínimo, es decir en \((0,0)\). Además, para \(\|(x,y)\|\to\infty\) se tiene \(r\to\infty\) y
 	\[
 	f(x,y)=-200e^{-0.02 r}\longrightarrow 0^{-}.
 	\]
 	Esto implica:
 	\begin{itemize}
-		\item \(\inf_{(x,y)\in\mathbb{R}^2} f(x,y)=f(0,0)\), y el mínimo es \textbf{global y único}.
-		\item \(\sup_{(x,y)\in\mathbb{R}^2} f(x,y)=0\), pero \emph{no} se alcanza: \(f(x,y)<0\) para todo \((x,y)\) y \(\lim_{\|(x,y)\|\to\infty} f(x,y)=0\). Por tanto no existe máximo global alcanzado en \(\mathbb{R}^2\) (el supremo es \(0\)).
+		\item \(\inf_{(x,y)\in\mathbb{R}^2} f(x,y)=f(0,0)\approx -196.0397\), y el mínimo es global y único.
+		\item \(\sup_{(x,y)\in\mathbb{R}^2} f(x,y)=0\), pero \emph{no} se alcanza: \(f(x,y)<0\) para todo \((x,y)\) y \\ \(\lim_{\|(x,y)\|\to\infty} f(x,y)=0\). Por tanto no existe máximo global alcanzado en \(\mathbb{R}^2\) (el supremo es \(0\)).
 	\end{itemize}
 	
-	\subsection{Convexidad}
-	Para estudiar la convexidad global debe comprobarse la positividad semidefinida del Hessiano en todo \(\mathbb{R}^2\). Como la autovalor tangencial \(\lambda_{\text{tang}}(r)>0\) para todo \(r\ge1\) pero la autovalor radial \(\lambda_{\text{rad}}(r)\) cambia de signo en \(r_0\approx 3.7745\), concluimos que:
-	\begin{itemize}
-		\item En la bola centrada en el origen de radio \(u_{\text{crit}}=\sqrt{r_0^2-1}\approx 3.6396\) (es decir para \(\|(x,y)\|<3.6396\)) el Hessiano es definido positivo y \(f\) es localmente convexa en esa región.
-		\item Para \(\|(x,y)\|>3.6396\) la autovalor radial es negativa, por lo que el Hessiano es indefinido y la función \emph{no} es convexa globalmente.
-	\end{itemize}
-	En particular, \(f\) no es ni convexa ni cóncava en todo \(\mathbb{R}^2\).
 	
-	\subsection{Consecuencias prácticas para algoritmos}
-	\begin{itemize}
-		\item Dado que existe un único mínimo global en \((0,0)\) y la función es suave, los métodos locales bien diseñados (gradiente descendente con decaimiento apropiado del paso, métodos de Newton con buen manejo de Hessiano, etc.) tienen una buena probabilidad de converger hacia el mínimo si el punto inicial está dentro de la cuenca de atracción que incluye \((0,0)\).
-		\item No obstante, la no convexidad global (cambio de signo de la curvatura radial para \(\|(x,y)\|>3.6396\)) indica que:
-		\begin{itemize}
-			\item Métodos que suponen convexidad global pueden comportarse mal o fallar fuera de la región convexa (por ejemplo, estimaciones de paso óptimo basadas en convexidad).
-			\item Es importante ensayar distintos puntos iniciales y tamaños de paso. También es aconsejable monitorear la curvatura (autovalores del Hessiano) en iteraciones de segundo orden.
-		\end{itemize}
-	\end{itemize}
+	 Dado que existe un único mínimo global en \((0,0)\) y la función es suave, los métodos locales bien diseñados (gradiente descendente con decaimiento apropiado del paso, métodos de Newton con buen manejo de Hessiano, etc.) tienen una buena probabilidad de converger hacia el mínimo si el punto inicial está dentro de la cuenca de atracción que incluye al \((0,0)\). No obstante, la no convexidad global indica que métodos que suponen convexidad global pueden comportarse mal o fallar fuera de la región convexa (por ejemplo, estimaciones de paso óptimo basadas en convexidad).
 	
-	\bigskip
-	\noindent\textbf{Resumen:} \(f\) es \(C^2\), tiene un único punto crítico en \((0,0)\) que es mínimo global, no posee máximo alcanzado (supremo \(0\)), y es localmente convexa cerca del origen (bola de radio aproximado \(3.6396\)) pero no convexa globalmente debido a la curvatura radial negativa para \(r>r_0\).
-	
-	
+
 	\subsection{Interpretación geométrica}
+	
+	
+	
+	\begin{figure}[H]
+		\centering
+		
+		% --- Subfigura (a) ---
+		\begin{subfigure}[b]{0.5\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{functionR3.png}
+			\caption{Gráfico de la función.}
+			\label{fig:functionR3}
+		\end{subfigure}
+		\hfill
+		% --- Subfigura (b) ---
+		\begin{subfigure}[b]{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{functionZR2.png}
+			\caption{Curvas de nivel de $f$.}
+			\label{fig:functionZ}
+		\end{subfigure}
+		
+		% --- Leyenda general de la figura ---
+		\caption{Representaciones de la función para $(x,y) \in [-80,80]^2$.}
+		\label{fig:function}
+	\end{figure}
+	
+	
 	
 	La función analizada
 	\[
 	f(x,y) = -200 e^{-0.02\sqrt{x^2 + y^2 + 1}}
 	\]
 	depende únicamente del término \(\sqrt{x^2 + y^2}\), es decir, de la \emph{distancia euclidiana al origen}. 
-	Por lo tanto, puede clasificarse como una función \emph{radialmente simétrica}, en la que los valores de \(f\) permanecen constantes para todos los puntos equidistantes del origen.
-	
-	\paragraph{Curvas de nivel.}  
-	Las curvas de nivel o \emph{iso-contornos} están dadas por el conjunto de puntos \((x, y)\) que satisfacen
+	Por lo tanto, puede clasificarse como una función \emph{radialmente simétrica}, en la que los valores de \(f\) permanecen constantes para todos los puntos equidistantes del origen. Las curvas de nivel o \emph{iso-contornos} están dadas por el conjunto de puntos \((x, y)\) que satisfacen
 	\[
 	f(x, y) = c \quad \Rightarrow \quad -200 e^{-0.02\sqrt{x^2 + y^2 + 1}} = c.
 	\]
@@ -557,17 +426,19 @@
 	\[
 	r(c) = \sqrt{\left[-50\ln\left(-\frac{c}{200}\right)\right]^2 - 1}, \quad c \in (-200, 0).
 	\]
-	Así, todas las curvas de nivel son \emph{circunferencias concéntricas} centradas en el origen, lo cual evidencia la estructura perfectamente simétrica del modelo.  
+	Así, todas las curvas de nivel son \emph{circunferencias concéntricas} centradas en el origen (Figura \ref{fig:functionZ}), lo cual evidencia la estructura perfectamente simétrica del modelo.  
 	
-	\paragraph{Forma tridimensional.}  
+	\qquad
+
 	En el espacio tridimensional \((x, y, f(x,y))\), la superficie adopta la forma de un \emph{cuenco suave} o \emph{superficie de potencial radial decreciente}. 
 	El valor máximo (menos negativo) se alcanza cuando \(r \to \infty\), donde la función tiende asintóticamente a 0, mientras que el mínimo absoluto ocurre en el origen, con
 	\[
 	f(0,0) = -200 e^{-0.02} \approx -196.04.
 	\]
-	Esta forma implica que la superficie desciende de manera monótona desde el exterior hacia el centro, sin presentar valles secundarios ni crestas locales, lo que anticipa la existencia de un único mínimo global.
+	Esta forma implica que la superficie desciende de manera monótona desde el exterior hacia el centro, sin presentar valles secundarios ni crestas locales, lo que anticipa la existencia de un único mínimo global (Figura \ref{fig:functionR3}).
 	
-	\paragraph{Comportamiento de la pendiente.}  
+	\qquad
+
 	La pendiente de la función, representada por la magnitud del gradiente,
 	\[
 	\|\nabla f(x,y)\| = 4 e^{-0.02\sqrt{x^2 + y^2 + 1}},
@@ -577,12 +448,11 @@
 	Desde el punto de vista geométrico, este comportamiento genera una \emph{zona de alta curvatura} en el entorno del mínimo, seguida de un \emph{amplio altiplano} donde la función varía lentamente.  
 	Tal estructura tiene implicaciones directas en la dinámica de los algoritmos de optimización: el gradiente descendente experimentará convergencia rápida cerca del origen y muy lenta a grandes distancias, debido a la suavidad creciente de la función.
 	
-	\paragraph{Interpretación física.}  
+	\qquad
+
 	Geométricamente, puede interpretarse como un modelo de \emph{campo de potencial negativo} cuya intensidad disminuye exponencialmente con la distancia al centro.  
 	El término \(-200\) actúa como factor de escala del potencial, mientras que el coeficiente \(0.02\) regula la rapidez con la que dicho potencial se disipa.  
 	Por analogía con la física, el origen representa una \emph{zona de atracción estable}, hacia la cual convergen las trayectorias definidas por el campo de gradiente.  
-	
-	En síntesis, la función define una superficie radialmente simétrica, suavemente decreciente y sin irregularidades topológicas.
 	
 	\vspace{1em}
 	
@@ -590,10 +460,10 @@
 	
 	Dado que la función está definida por un término exponencial negativo, su rango de valores es finito y puede determinarse directamente a partir de las propiedades de la función exponencial.  
 	
-	\paragraph{Cotas globales.}  
+	
 	Para todo \((x,y) \in \mathbb{R}^2\),
 	\[
-	0 < e^{-0.02\sqrt{x^2 + y^2 + 1}} \le e^{-0.02},
+	\sqrt{x^2 + y^2 + 1} \ge 1 \quad \Rightarrow \quad 0 < e^{-0.02\sqrt{x^2 + y^2 + 1}} \le e^{-0.02},
 	\]
 	ya que el exponente \(-0.02\sqrt{x^2 + y^2 + 1}\) toma valores en el intervalo \((-\infty, -0.02]\).  
 	Multiplicando por el factor \(-200\), se obtiene:
@@ -602,11 +472,11 @@
 	\]
 	Por lo tanto, el rango de la función es:
 	\[
-	f(\mathbb{R}^2) = (-200e^{-0.02}, \, 0) \approx (-196.04,\, 0).
+	f(\mathbb{R}^2) = [-200e^{-0.02}, \, 0) \approx [-196.04,\, 0).
 	\]
 	La función está así acotada superiormente por 0 y posee un mínimo global en \(f(0,0)\).  
 	
-	\paragraph{Comportamiento asintótico.}  
+	
 	Al analizar el límite cuando la distancia al origen tiende a infinito, se tiene:
 	\[
 	\lim_{\sqrt{x^2+y^2}\to \infty} f(x,y) = -200 \lim_{r \to \infty} e^{-0.02\sqrt{r^2+1}} = 0^-.
@@ -619,66 +489,26 @@
 	\]
 	confirmando que el mínimo absoluto ocurre en el origen.
 	
-	\paragraph{Conclusión del análisis asintótico.}  
+	
 	El término exponencial impone una disminución controlada que asegura la existencia de un mínimo global y la ausencia de oscilaciones.  
 	En términos prácticos, esto significa que la función es \emph{bien condicionada}, pues su crecimiento y curvatura son moderados, evitando problemas numéricos asociados a gradientes excesivamente grandes o abruptos.
 	
-	En consecuencia, \(f(x,y)\) constituye un caso representativo de superficie suave, acotada y radialmente decreciente, que permite un análisis teórico exhaustivo y una exploración experimental clara de los métodos de optimización aplicados.
+	En consecuencia, \(f(x,y)\) constituye un caso representativo de superficie suave, acotada y radialmente decreciente, que permite un análisis teórico exhaustivo y una exploración experimental clara de los métodos de optimización.
 	
 	
-	\subsection{Campo de gradientes}
 	
-	Para estudiar el comportamiento dinámico de los métodos de optimización sobre la función
-	\[
-	f(x,y) = -200 e^{-0.02\sqrt{x^2 + y^2 + 1}},
-	\]
-	es fundamental analizar su campo de gradientes, el cual determina las direcciones de ascenso y descenso más pronunciadas.
-	
-	\paragraph{Gradiente analítico.}  
-	Sea \( r = \sqrt{x^2 + y^2 + 1} \). Aplicando la regla de la cadena, se obtiene:
-	\[
-	\nabla f(x,y) = \left( \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y} \right)
-	= \left( 4xe^{-0.02r}\frac{1}{r}, \, 4ye^{-0.02r}\frac{1}{r} \right)
-	= \frac{4e^{-0.02r}}{r}(x, y).
-	\]
-	El gradiente es proporcional al vector de posición \((x,y)\), lo cual significa que su dirección coincide con el radio vector.  
-	Por tanto, el campo de gradientes presenta \emph{simetría radial perfecta}: todos los vectores son colineales con el eje que une el punto \((x,y)\) con el origen.
-	
-	\paragraph{Interpretación geométrica.}  
-	Cada vector gradiente apunta hacia fuera del origen, pues \(f\) es una función decreciente con respecto a la distancia radial.  
-	En consecuencia:
-	\begin{itemize}
-		\item Los algoritmos de \textbf{ascenso del gradiente} divergerán del origen siguiendo trayectorias radiales.
-		\item Los algoritmos de \textbf{descenso del gradiente}, por el contrario, seguirán trayectorias de convergencia directa hacia el origen.
-	\end{itemize}
-	
-	\paragraph{Magnitud y comportamiento.}  
-	La norma del gradiente está dada por:
-	\[
-	\|\nabla f(x,y)\| = 4e^{-0.02r},
-	\]
-	la cual decrece exponencialmente con \(r\).  
-	Esto implica que el campo vectorial es fuerte en la región central (valores pequeños de \(r\)) y débil en la periferia.  
-	Geométricamente, el flujo se ralentiza a medida que los puntos se alejan del origen, generando zonas de movimiento casi nulo donde el gradiente se aproxima a cero.  
-	Este patrón es característico de superficies con \emph{curvatura decreciente} y explica por qué los métodos de optimización pueden experimentar convergencia lenta en regiones lejanas al mínimo.
-	
-	\paragraph{Curvatura y estabilidad local.}  
-	El Hessiano de \(f\) resulta ser definido positivo en un entorno del origen, lo cual confirma la convexidad local. Esta propiedad garantiza que las trayectorias del gradiente descendente no oscilen ni diverjan en las proximidades del mínimo global.
-	
-	\vspace{1em}
-	
-	\subsection*{Implicaciones para algoritmos de optimización}
+	\subsection{Implicaciones para algoritmos de optimización}
 	
 	El comportamiento teórico del gradiente y la forma global de la superficie permiten anticipar el rendimiento y las posibles dificultades de los algoritmos de optimización aplicados a \(f(x,y)\).
 	
-	\paragraph{Método del gradiente descendente.}  
+	\paragraph{Método del gradiente descendente:}  
 	Dado que el gradiente apunta radialmente hacia el origen y su magnitud decrece suavemente, el método de gradiente descendente garantiza convergencia global para cualquier punto inicial \((x_0,y_0)\).  
 	No obstante, la velocidad de convergencia dependerá del tamaño del paso (\(\alpha\)):
 	\[
 	\mathbf{x}_{k+1} = \mathbf{x}_k - \alpha \nabla f(\mathbf{x}_k).
 	\]
 	Si \(\alpha\) es demasiado grande, el algoritmo puede sobrepasar el mínimo (debido a la pendiente suave en la periferia); si es demasiado pequeño, el avance se vuelve extremadamente lento.  
-	Por ello, resulta recomendable emplear técnicas adaptativas de selección de paso (por ejemplo, \emph{backtracking line search} o \emph{Armijo rule}).
+	Por ello, resulta recomendable emplear técnicas adaptativas de selección de paso.
 	
 	\paragraph{Método de Newton.}  
 	El método de Newton se beneficia de la suavidad y la positividad local del Hessiano:
@@ -690,26 +520,12 @@
 	Por tanto, el método de Newton debe iniciarse en puntos relativamente cercanos al mínimo o combinarse con estrategias híbridas de primer orden.
 	
 	\paragraph{Métodos estocásticos y variantes.}  
-	Los algoritmos estocásticos o metaheurísticos (como \emph{simulated annealing} o \emph{particle swarm optimization}) no se benefician particularmente de la estructura de \(f\), dado que no existen óptimos locales que justifiquen la aleatoriedad.  
-	Sin embargo, estos métodos pueden emplearse como contraste experimental para observar la rapidez con que identifican el mínimo en comparación con los métodos deterministas.
+	Los algoritmos estocásticos o metaheurísticos (como \emph{simulated annealing} o \emph{particle swarm optimization}) no se benefician particularmente de la estructura de \(f\), dado que no existen óptimos locales aleatoriamente distribuidos que justifiquen la aleatoriedad, por lo que los métodos deterministas estudiados son la mejor opción para realizar el análisis.
 	
-	\paragraph{Conclusión metodológica.}  
-	En resumen:
-	\begin{itemize}
-		\item Los algoritmos de primer orden son apropiados y garantizan convergencia global.
-		\item Los métodos de segundo orden presentan mejor rendimiento local, pero requieren condiciones iniciales más favorables.
-		\item La ausencia de irregularidades topológicas evita estancamientos o bifurcaciones.
-	\end{itemize}
-	Esta combinación convierte a \(f(x,y)\) en una superficie ideal para estudiar propiedades de convergencia, estabilidad y sensibilidad numérica en entornos continuos.
-	
-	\vspace{1em}
-	
-	\subsection*{Relación con el análisis experimental}
-	
-	El estudio teórico anterior proporciona un marco de referencia preciso para la fase experimental de la tarea.  
+	\qquad
+	 
 	A partir de las propiedades demostradas, pueden establecerse las siguientes expectativas y objetivos de validación empírica:
 	
-	\paragraph{Predicciones basadas en el análisis teórico.}
 	\begin{itemize}
 		\item El punto \((0,0)\) debe ser identificado consistentemente como el \emph{único mínimo global}.
 		\item Las trayectorias de convergencia de los algoritmos deben ser aproximadamente radiales, reflejando la simetría del campo de gradiente.
@@ -717,27 +533,14 @@
 		\item La magnitud del gradiente debe decrecer exponencialmente con la distancia, produciendo una convergencia lenta en la periferia.
 	\end{itemize}
 	
-	\paragraph{Diseño de experimentos.}  
-	Para corroborar las conclusiones teóricas, se recomienda:
-	\begin{enumerate}
-		\item Realizar simulaciones con distintos puntos iniciales distribuidos uniformemente en el dominio \([-100,100]^2\).
-		\item Comparar el número de iteraciones necesarias para alcanzar un error predefinido con diferentes tamaños de paso.
-		\item Visualizar los campos de gradiente y las trayectorias de los algoritmos mediante gráficas de contorno y superficies 3D.
-		\item Registrar la evolución temporal del valor de la función y de la norma del gradiente.
-	\end{enumerate}
-	
-	\paragraph{Validación esperada.}  
-	Los resultados experimentales deberán reproducir fielmente las propiedades teóricas:  
-	un mínimo global bien definido, convergencia radial, ausencia de oscilaciones y comportamiento exponencial del gradiente.  
-	Las discrepancias que puedan aparecer estarán asociadas a la discretización numérica o a la elección de parámetros de los métodos, lo que constituye un aspecto de análisis relevante en la comparación entre algoritmos.
-	
-	\paragraph{Conclusión.}  
-	La conexión entre el marco teórico y la experimentación computacional permite verificar empíricamente las propiedades de convexidad, suavidad y estabilidad derivadas del análisis matemático.  
-	De este modo, el problema sirve como un modelo de referencia ideal para evaluar la eficiencia, robustez y precisión de los algoritmos de optimización continua en espacios bidimensionales.
-	
-	
-	
-	\section*{Selección y análisis de algoritmos de optimización}
+
+
+
+
+
+
+
+	\section{Selección y análisis de algoritmos de optimización}
 	
 	Con base en las propiedades teóricas del modelo
 	\[
@@ -746,25 +549,28 @@
 	se seleccionan algoritmos adecuados considerando la suavidad, continuidad y ausencia de restricciones del problema.  
 	Dado que la función es diferenciable en todo \(\mathbb{R}^2\), con un único mínimo global y sin discontinuidades, los métodos de optimización continua sin restricciones son los más apropiados.  
 	
-	Entre las opciones posibles (métodos de barrera, penalización, máximo descenso, búsqueda direccional, Newton y quasi-Newton), se proponen dos enfoques representativos:  
-	1. **Método del gradiente o máximo descenso**, como técnica de primer orden.  
-	2. **Método de Newton o una de sus variantes quasi-Newton**, como técnica de segundo orden.  
+	Entre las opciones posibles (métodos de barrera, penalización, máximo descenso, búsqueda direccional, Newton y quasi-Newton), se proponen dos enfoques representativos:
 	
+	\begin{itemize}
+		\item Método del gradiente o máximo descenso como técnica de primer orden. 
+		\item Método de Newton o una de sus variantes quasi-Newton como técnica de segundo orden.
+	\end{itemize}
+	  
 	Ambos permitirán comparar la eficiencia y estabilidad de los métodos según el orden de derivadas empleadas y su sensibilidad a la curvatura del modelo.
+	
 	
 	\vspace{1em}
 	
-	\subsection*{1. Método del gradiente descendente (máximo descenso)}
 	
-	\paragraph{Descripción general.}  
-	El método del gradiente descendente, también denominado \emph{método del máximo descenso}, se basa en la iteración:
+	\subsection{Método de máximo descenso}
+	
+	El \emph{método del máximo descenso}, también denominado método del gradiente descendente, se basa en la iteración:
 	\[
 	\mathbf{x}_{k+1} = \mathbf{x}_k - \alpha_k \nabla f(\mathbf{x}_k),
 	\]
 	donde \(\alpha_k > 0\) es el tamaño de paso o \emph{learning rate}.  
 	En cada iteración, el algoritmo se mueve en la dirección opuesta al gradiente, buscando el punto donde la función disminuye más rápidamente.
 	
-	\paragraph{Aplicación al modelo.}  
 	Para la función \(f(x,y)\), el gradiente analítico es:
 	\[
 	\nabla f(x,y) = \frac{4e^{-0.02\sqrt{x^2 + y^2 + 1}}}{\sqrt{x^2 + y^2 + 1}}(x,y),
@@ -787,75 +593,44 @@
 	\]
 	Dada la simetría radial de \(f\), las trayectorias de convergencia serán líneas rectas hacia el origen, y la velocidad de convergencia dependerá únicamente del valor de \(\alpha_k\).
 	
-	\paragraph{Ventajas.}
-	\begin{itemize}
-		\item Implementación sencilla y bajo costo computacional por iteración.  
-		\item Requiere únicamente el cálculo del gradiente, sin necesidad del Hessiano.  
-		\item Garantiza convergencia global para funciones suavemente decrecientes, como la analizada.
-	\end{itemize}
-	
-	\paragraph{Desventajas.}
-	\begin{itemize}
-		\item Convergencia lenta en regiones planas (donde \(\|\nabla f\|\) es pequeño).  
-		\item Alta sensibilidad a la elección del tamaño de paso: un \(\alpha_k\) inadecuado puede causar divergencia o estancamiento.  
-		\item No aprovecha información de curvatura, por lo que su desempeño empeora en problemas mal condicionados.
-	\end{itemize}
-	
-	\paragraph{Recomendación práctica.}  
-	Para mitigar sus limitaciones, se sugiere emplear una búsqueda de paso adaptativa (\emph{line search}) o estrategias de descenso con paso variable, ajustando \(\alpha_k\) en función de la norma del gradiente.
+	Este método tiene una implementación sencilla y conlleva un bajo costo computacional por iteración; requiere únicamente el cálculo del gradiente, sin necesidad del Hessiano, y arantiza convergencia global para funciones suavemente decrecientes como la analizada. Sin embargo, puede mostrar convergencia lenta en regiones planas (donde \(\|\nabla f\|\) es pequeño y es altamente sensible a la elección del tamaño de paso: un \(\alpha_k\) inadecuado puede causar divergencia o estancamiento. Para mitigar sus limitaciones, se empleó una búsqueda de paso adaptativa con la regla de Armijo.
 	
 	\vspace{1em}
 	
-	\subsection*{2. Método de Newton}
-	
-	\paragraph{Descripción general.}  
-	El método de Newton es un procedimiento de segundo orden que incorpora información de la curvatura del modelo mediante el Hessiano de la función.  
+	\subsection{Método de Newton}
+
+	El \emph{método de Newton} es un procedimiento de segundo orden que incorpora información de la curvatura del modelo mediante el Hessiano de la función.  
 	Su fórmula iterativa es:
 	\[
 	\mathbf{x}_{k+1} = \mathbf{x}_k - [\nabla^2 f(\mathbf{x}_k)]^{-1}\nabla f(\mathbf{x}_k),
 	\]
 	donde \(\nabla^2 f(\mathbf{x}_k)\) es la matriz Hessiana evaluada en el punto actual.
 	
-	\paragraph{Aplicación al modelo.}  
+	\qquad
+ 
 	Para la función en estudio, el Hessiano presenta la forma general:
 	\[
-	\nabla^2 f(x,y) = \frac{4e^{-0.02r}}{r^3}
-	\begin{pmatrix}
-		r^2 - 0.02x^2(r+1) & -0.02xy(r+1) \\
-		-0.02xy(r+1) & r^2 - 0.02y^2(r+1)
-	\end{pmatrix},
+		\nabla^{2} f(x,y) \;=\; 4\, e^{-0.02 s}\!\left(\;
+	\frac{1}{s} I_{2}
+	-\frac{0.02\,s + 1}{s^{3}}
+	\begin{pmatrix} x^{2} & xy \\[4pt] xy & y^{2} \end{pmatrix}
+	\right),
 	\]
-	donde \(r = \sqrt{x^2 + y^2 + 1}\).  
-	Este tensor es simétrico y definido positivo en un entorno del origen, garantizando que el método converja cuadráticamente hacia el mínimo global.
+	donde \(s = \sqrt{x^2 + y^2 + 1}\).  
+	Esta expresión es simétrica y definida positiva en un entorno del origen, garantizando que el método converja cuadráticamente hacia el mínimo global.
 	
-	\paragraph{Ventajas.}
-	\begin{itemize}
-		\item Convergencia rápida (cuadrática) en la vecindad del óptimo.  
-		\item Aprovecha la información de curvatura, adaptando la dirección de búsqueda según la topología local.  
-		\item No requiere ajuste manual del tamaño de paso si el Hessiano es bien condicionado.
-	\end{itemize}
+	Tiene una convergencia rápida en la vecindad del óptimo; aprovecha la información de curvatura, adaptando la dirección de búsqueda según la topología local, y no requiere ajuste manual del tamaño de paso si el Hessiano es bien condicionado. Su principal problemática radica en el costo computacional elevado que implica, dado que requiere el cálculo y la inversión del Hessiano en cada iteración, lo que también puede desencadenar errores numéricos si el Hessiano se aproxima a la singularidad (lo que ocurre lejos del mínimo, donde \(\|\nabla^2 f\| \to 0\)). No garantiza convergencia global, pues puede fallar si el punto inicial está demasiado alejado del óptimo.
 	
-	\paragraph{Desventajas.}
-	\begin{itemize}
-		\item Costo computacional elevado: requiere el cálculo y la inversión del Hessiano en cada iteración.  
-		\item Posibles problemas numéricos si el Hessiano se aproxima a la singularidad (lo que ocurre lejos del mínimo, donde \(\|\nabla^2 f\| \to 0\)).  
-		\item No garantiza convergencia global; puede fallar si el punto inicial está demasiado alejado del óptimo.
-	\end{itemize}
-	
-	\paragraph{Variante quasi-Newton (BFGS).}  
 	Para evitar los inconvenientes anteriores, se puede utilizar una versión quasi-Newton, como el algoritmo BFGS, que construye una aproximación del Hessiano a partir de información del gradiente:
 	\[
 	B_{k+1} = B_k + \frac{y_k y_k^T}{y_k^T s_k} - \frac{B_k s_k s_k^T B_k}{s_k^T B_k s_k},
 	\]
 	donde \(s_k = x_{k+1} - x_k\) y \(y_k = \nabla f_{k+1} - \nabla f_k\).  
-	Este enfoque reduce significativamente el costo computacional sin sacrificar la estabilidad, logrando convergencia superlineal.
-	
-	\paragraph{Recomendación práctica.}  
-	El método de Newton (o su versión BFGS) resulta ideal para refinar la solución una vez que el gradiente descendente ha aproximado la región del mínimo, combinando así convergencia global y eficiencia local.
+	Este enfoque reduce significativamente el costo computacional sin sacrificar la estabilidad, logrando convergencia superlineal. Resulta ideal para refinar la solución una vez que el gradiente descendente ha aproximado la región del mínimo, combinando así convergencia global y eficiencia local.
 	
 	\vspace{1em}
 	
-	\subsection*{3. Comparación general de los algoritmos propuestos}
+	\subsection{Comparación}
 	
 	\begin{center}
 		\begin{tabular}{|l|c|c|}
@@ -879,13 +654,12 @@
 		\end{tabular}
 	\end{center}
 	
-	\paragraph{Conclusión comparativa.}  
-	Ambos métodos se complementan: el gradiente descendente ofrece robustez global y simplicidad, mientras que Newton o quasi-Newton proporcionan refinamiento rápido y precisión local.  
-	Una estrategia combinada —utilizando primero el gradiente descendente y luego Newton o BFGS al acercarse al óptimo— representa la solución más eficiente para el problema planteado.
+	
+	Ambos métodos se complementan: el gradiente descendente ofrece robustez global y simplicidad, mientras que Newton o quasi-Newton proporcionan refinamiento rápido y precisión local.	Una estrategia combinada —utilizando primero el gradiente descendente y luego Newton o BFGS al acercarse al óptimo— representa la solución más eficiente para el problema planteado.
 	
 	
 	
-	\section{Bibliografía}
+	
 	\begin{thebibliography}{9}
 		\bibitem{Bouza2021}
 		G. Bouza Allende, \emph{Notas de clase: Temas 1 y 2 — Optimización Matemática I}, February 2, 2021. (Documento proporcionado por el usuario).
@@ -895,7 +669,4 @@
 	\end{thebibliography}
 	
 	
-	
-		
 \end{document}
-a
