@@ -12,8 +12,6 @@
 \usepackage{hyperref}
 \usepackage{enumitem}
 \usepackage{microtype}
-\usepackage{enumitem}
-\usepackage{graphicx}
 \graphicspath{{img/}}
 \usepackage{float}
 \usepackage{caption}
@@ -51,9 +49,9 @@
 	Denotamos por \(\nabla f(x)\) el gradiente y por \(\nabla^2 f(x)\) la matriz Hessiana cuando existan.
 	
 	\subsection{Clases de problemas y propiedades básicas}
-	Los problemas suelen clasificarse en clases para su análisis y soliución. Los tipos más comunes son los irrestrictos ()con \(M=\mathbb{R}^n\)0, los continuos (con \(f \in C^1\)), y los convexos (con \(f\) convexa y \(M\) convexo, y que cumplen que cualquier mínimo local es también mínimo global).  En general, para \(f\in C^2\), \(f\) convexa \(\iff\) \(\nabla^2 f(x)\succeq 0\) para todo \(x\).
+	Los problemas suelen clasificarse en clases para su análisis y solución. Los tipos más comunes son los irrestrictos (con \(M=\mathbb{R}^n\)), los continuos (con \(f \in C^1\)) y los convexos (con \(f\) convexa y \(M\) convexo, donde cualquier mínimo local es también mínimo global). En general, para \(f\in C^2\), \(f\) convexa \(\iff\) \(\nabla^2 f(x)\succeq 0\) para todo \(x\).
 	
-	Puede garantizarse la existencia de soluciones en algunos casos específicos, como cuando \(M\) es compacto y \(f\) es continua, que existe mínimo global, o en problemas de mínimo no compactos cuando \(f(x)\to\infty\) junto a \(\|x\|\to\infty\)). En el caso irrestricto, si \(f\in C^1\) y \(x^\ast\) es un mínimo local interior, entonces \(\nabla f(x^\ast)=0\) (condición necesaria de primer orden). Otra condición viene dada por el \textbf{Teroema de KKT}: Sea \(x^\ast\) mínimo local factible bajo condiciones regulares (LICQ). Entonces existen multiplicadores \(\lambda\in\mathbb{R}^m\), \(\mu\in\mathbb{R}^s\) con \(\mu_j\ge 0\) tales que:
+	Puede garantizarse la existencia de soluciones en algunos casos específicos, como cuando \(M\) es compacto y \(f\) es continua (existe mínimo global), o en problemas no compactos cuando \(f(x)\to\infty\) al tiempo que \(\|x\|\to\infty\). En el caso irrestricto, si \(f\in C^1\) y \(x^\ast\) es un mínimo local interior, entonces \(\nabla f(x^\ast)=0\) (condición necesaria de primer orden). Otra condición viene dada por el \textbf{Teorema de KKT}: Sea \(x^\ast\) mínimo local factible bajo condiciones regulares (LICQ). Entonces existen multiplicadores \(\lambda\in\mathbb{R}^m\), \(\mu\in\mathbb{R}^s\) con \(\mu_j\ge 0\) tales que:
 	\[
 	\nabla f(x^\ast) + \sum_{i=1}^m \lambda_i \nabla h_i(x^\ast) + \sum_{j=1}^s \mu_j \nabla g_j(x^\ast) = 0,
 	\]
@@ -74,7 +72,7 @@
 	\begin{itemize}[nosep]
 		\item \emph{Gradiente descendente (steepest descent):} \(d_k=-\nabla f(x_k)\). Orden de convergencia lineal en general.
 		\item \emph{Newton:} \(d_k=-[\nabla^2 f(x_k)]^{-1}\nabla f(x_k)\). Requiere Hessiana y su orden de convergencia es cuasi-cuadrático local si la Hessiana es definida positiva cerca del óptimo. Debido a la necesidad del cálculo de la inversa de la Hessiana, no es recomendable para matrices mal condicionadas.
-		\item \emph{Quasi-Newton (BFGS, DFP):} Aproximan la inversa de la Hessiana con convergencia superlineal típica, lo que los hace buena práctica numérica para problemas grandes. La forma general del vector direcctor es \(d_k = - H_k \nabla f(x_k)\)
+		\item \emph{Quasi-Newton (BFGS, DFP):} Aproximan la inversa de la Hessiana con convergencia superlineal típica, lo que los hace buena práctica numérica para problemas grandes. La forma general del vector director es \(d_k = - H_k \nabla f(x_k)\)
 		donde \(H_k\) es una matriz simétrica definida positiva que se actualiza en cada iteración y garantiza que se aproxime correctamente la curvatura local del gradiente entre \(x_k\) y \(x_{k+1}\).
 	\end{itemize}
 	
@@ -147,7 +145,7 @@
 	
 	\qquad \qquad \qquad \qquad
 	
-	Sin embargo, para obtener convergencia más robusta, especialmente en métodos de Newton y quasi--Newton, se utilizan las \textbf{condiciones de Wolfe}, que añaden un control de curvatura además del descenso suficiente. Se definen dos parámetros \(0 < c_1 < c_2 < 1\) (por ejemplo \(c_1=10^{-4},\; c_2=0.9\)) tales que el valor de \(\alpha_k\) debe satisfacer simultáneamente:
+	Sin embargo, para obtener convergencia más robusta, especialmente en métodos de Newton y quasi-Newton, se utilizan las \textbf{condiciones de Wolfe}, que añaden un control de curvatura además del descenso suficiente. Se definen dos parámetros \(0 < c_1 < c_2 < 1\) (por ejemplo \(c_1=10^{-4},\; c_2=0.9\)) tales que el valor de \(\alpha_k\) debe satisfacer simultáneamente:
 	
 	\begin{align}
 		\text{(Condición de Armijo)} 
@@ -201,13 +199,13 @@
 	f(x,y) = -200\,e^{-0.02\sqrt{x^{2}+y^{2}+1}},\qquad (x,y)\in\mathbb{R}^2.
 	\]
 	
-	Definiendo \(	s_1(x,y):=\sqrt{x^{2}+y^{2}+1},   \) la función \(s_1\) es de clase \(C^2\) en \(\mathbb{R}^2\) (no hay singularidades porque \(x^2+y^2+1\ge 1\), manteniendo siempre definidas \(s_1\) y \(s_1'\)). Como la composición de funciones \(C^2\) es \(C^2\), sabiendo que \(s_2(x) := e^x\) y \(\forall a \in \mathbb{R}: s_3(x) := a x\) son \(C^2\), se tiene
+	Definiendo \( s(x,y):=\sqrt{x^{2}+y^{2}+1} \), la función \(s\) es de clase \(C^2\) en \(\mathbb{R}^2\) (no hay singularidades porque \(x^2+y^2+1\ge 1\), manteniendo siempre definidas \(s\) y sus derivadas). Como la composición de funciones \(C^2\) es \(C^2\), sabiendo que \(s_2(x) := e^x\) y \(\forall a \in \mathbb{R}: s_3(x) := a x\) son \(C^2\), se tiene
 	\[
 	f\in C^2(\mathbb{R}^2).
 	\]
 	En particular, \(f\) es continua y diferenciable de todas las órdenes en todo \(\mathbb{R}^2\).
 	
-	Si quisieramos calcular \(\nabla f=(\partial_x f,\partial_y f)^\top\). Podemos empezar observando que la derivada de \(s\) cumple al apllicar la regla de la cadena:
+	Si quisiéramos calcular \(\nabla f=(\partial_x f,\partial_y f)^\top\). Podemos empezar observando que la derivada de \(s\) cumple al aplicar la regla de la cadena:
 	\[
 	\frac{\partial s}{\partial x} = \frac{x}{s},\qquad
 	\frac{\partial s}{\partial y} = \frac{y}{s},
@@ -234,9 +232,9 @@
 	\subsection{Puntos críticos}
 	Las ecuaciones críticas \(\nabla f(x,y)=0_2\) conducen a
 	\[
-	\frac{4e^{-0.02 r}}{r}x=0,\qquad \frac{4e^{-0.02 r}}{r}y=0.
+	\frac{4e^{-0.02 s}}{s}x=0,\qquad \frac{4e^{-0.02 s}}{s}y=0,
 	\]
-	Dado que \(\forall (x,y) \in \mathbb{R}^2: \dfrac{4e^{-0.02 r}}{r}>0\), la única solución posible es:
+	con \(s=\sqrt{x^2+y^2+1}\). Dado que \(\forall (x,y) \in \mathbb{R}^2: \dfrac{4e^{-0.02 s}}{s}>0\), la única solución posible es:
 	\[
 	(x,y)=(0,0).
 	\]
@@ -374,7 +372,7 @@
 	\]
 	Para cualquier \((x,y)\) se cumple \(s=\sqrt{x^2+y^2+1}\ge 1\), y la función \(s\mapsto -e^{-0.02 s}\) es estrictamente creciente en \(s\). Por tanto \(f\) alcanza su valor mínimo en \(s\) mínimo, es decir en \((0,0)\). Además, para \(\|(x,y)\|\to\infty\) se tiene \(r\to\infty\) y
 	\[
-	f(x,y)=-200e^{-0.02 r}\longrightarrow 0^{-}.
+	f(x,y)=-200e^{-0.02 s}\longrightarrow 0^{-}.
 	\]
 	Esto implica:
 	\begin{itemize}
@@ -596,7 +594,7 @@
 	\]
 	Dada la simetría radial de \(f\), las trayectorias de convergencia serán líneas rectas hacia el origen, y la velocidad de convergencia dependerá únicamente del valor de \(\alpha_k\).
 	
-	Este método tiene una implementación sencilla y conlleva un bajo costo computacional por iteración; requiere únicamente el cálculo del gradiente, sin necesidad del Hessiano, y arantiza convergencia global para funciones suavemente decrecientes como la analizada. Sin embargo, puede mostrar convergencia lenta en regiones planas (donde \(\|\nabla f\|\) es pequeño y es altamente sensible a la elección del tamaño de paso: un \(\alpha_k\) inadecuado puede causar divergencia o estancamiento. Para mitigar sus limitaciones, se empleó una búsqueda de paso adaptativa con la regla de Armijo.
+	Este método tiene una implementación sencilla y conlleva un bajo costo computacional por iteración; requiere únicamente el cálculo del gradiente, sin necesidad del Hessiano, y garantiza convergencia global para funciones suavemente decrecientes como la analizada. Sin embargo, puede mostrar convergencia lenta en regiones planas (donde \(\|\nabla f\|\) es pequeño) y es altamente sensible a la elección del tamaño de paso: un \(\alpha_k\) inadecuado puede causar divergencia o estancamiento. Para mitigar sus limitaciones, se empleó una búsqueda de paso adaptativa con la regla de Armijo.
 	
 	\vspace{1em}
 	
