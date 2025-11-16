@@ -18,14 +18,15 @@
 \usepackage{subcaption}
 \usepackage{tabularx}   % Añádelo en el preámbulo (si no está)
 \usepackage{booktabs}   % Para líneas horizontales de mejor calidad
-\usepackage{array}      % Para control de alineación
+\usepackage{array}
+\usepackage{xcolor}      % Para control de alineación
 \geometry{margin=2.5cm}
 
 %-------------------------------------
 % Datos del documento
 %-------------------------------------
 \title{\textbf{Tarea: Análisis y Aplicación de Algoritmos de Optimización}}
-\author{Sebastian González Alfonso \\ Ciencia de la Computación \\ Tercer Año \\ Modelos de Optimización}
+\author{Sebastian González Alfonso \\ Ciencia de la Computación \\ Tercer Año \\ Modelos de Optimización \\ \href{https://github.com/sebagonz106/Tarea-Evaluativa-Algoritmos}{\textcolor{blue}{Repositorio en GitHub}}}
 \date{\today}
 %-------------------------------------
 % Inicio del documento
@@ -36,7 +37,7 @@
 	\tableofcontents
 	\newpage
 	
-		\section{Marco Teórico \cite{Bouza2021}}
+	\section{Marco Teórico \cite{Bouza2021}}
 	\subsection{Notación y definición general}
 	Sea \(f:\mathbb{R}^n\to\mathbb{R}\) la función objetivo y sea \(M\subset\mathbb{R}^n\) el conjunto factible de soluciones. Consideramos el problema general:
 	\[
@@ -425,7 +426,7 @@
 	\]
 	De esta expresión se deduce que cada nivel \(c\) corresponde a una circunferencia de radio
 	\[
-	r(c) = \sqrt{\left[-50\ln\left(-\frac{c}{200}\right)\right]^2 - 1}, \quad c \in (-200, 0).
+	r(c) = \sqrt{\left[-50\ln\left(-\frac{c}{200}\right)\right]^2 - 1}, \quad c \in (-200 e^{-0.02}, 0).
 	\]
 	Así, todas las curvas de nivel son \emph{circunferencias concéntricas} centradas en el origen (Figura \ref{fig:functionZ}), lo cual evidencia la estructura perfectamente simétrica del modelo.  
 	
@@ -445,58 +446,16 @@
 	\|\nabla f(x,y)\| = 4 e^{-0.02\sqrt{x^2 + y^2 + 1}},
 	\]
 	disminuye de forma exponencial conforme aumenta la distancia al origen.  
-	Esto significa que la superficie es empinada cerca del centro y cada vez más plana en las regiones periféricas.  
-	Desde el punto de vista geométrico, este comportamiento genera una \emph{zona de alta curvatura} en el entorno del mínimo, seguida de un \emph{amplio altiplano} donde la función varía lentamente.  
-	Tal estructura tiene implicaciones directas en la dinámica de los algoritmos de optimización: el gradiente descendente experimentará convergencia rápida cerca del origen y muy lenta a grandes distancias, debido a la suavidad creciente de la función.
-	
-	\qquad
+	Esto significa que la superficie es empinada cerca del centro y cada vez más plana en las regiones periféricas. 	El término exponencial impone una disminución controlada que asegura la existencia de un mínimo global y la ausencia de oscilaciones. Desde el punto de vista geométrico, este comportamiento genera una \emph{zona de alta curvatura} en el entorno del mínimo, seguida de un \emph{amplio altiplano} donde la función varía lentamente. En términos prácticos, esto significa que la función es \emph{bien condicionada}, pues su crecimiento y curvatura son moderados, evitando problemas numéricos asociados a gradientes excesivamente grandes o abruptos. En consecuencia, \(f(x,y)\) constituye un caso representativo de superficie suave, acotada y radialmente decreciente, que permite un análisis teórico exhaustivo y una exploración experimental clara de los métodos de optimización.
 
-	Geométricamente, puede interpretarse como un modelo de \emph{campo de potencial negativo} cuya intensidad disminuye exponencialmente con la distancia al centro.  
+	
+	Pudiera interpretarse como un modelo de \emph{campo de potencial negativo} cuya intensidad disminuye exponencialmente con la distancia al centro.  
 	El término \(-200\) actúa como factor de escala del potencial, mientras que el coeficiente \(0.02\) regula la rapidez con la que dicho potencial se disipa.  
 	Por analogía con la física, el origen representa una \emph{zona de atracción estable}, hacia la cual convergen las trayectorias definidas por el campo de gradiente.  
 	
 	\vspace{1em}
 	
-	\subsection{Cotas y comportamiento asintótico}
-	
-	Dado que la función está definida por un término exponencial negativo, su rango de valores es finito y puede determinarse directamente a partir de las propiedades de la función exponencial.  
-	
-	
-	Para todo \((x,y) \in \mathbb{R}^2\),
-	\[
-	\sqrt{x^2 + y^2 + 1} \ge 1 \quad \Rightarrow \quad 0 < e^{-0.02\sqrt{x^2 + y^2 + 1}} \le e^{-0.02},
-	\]
-	ya que el exponente \(-0.02\sqrt{x^2 + y^2 + 1}\) toma valores en el intervalo \((-\infty, -0.02]\).  
-	Multiplicando por el factor \(-200\), se obtiene:
-	\[
-	-200e^{-0.02} \le f(x,y) < 0.
-	\]
-	Por lo tanto, el rango de la función es:
-	\[
-	f(\mathbb{R}^2) = [-200e^{-0.02}, \, 0) \approx [-196.04,\, 0).
-	\]
-	La función está así acotada superiormente por 0 y posee un mínimo global en \(f(0,0)\).  
-	
-	
-	Al analizar el límite cuando la distancia al origen tiende a infinito, se tiene:
-	\[
-	\lim_{\sqrt{x^2+y^2}\to \infty} f(x,y) = -200 \lim_{r \to \infty} e^{-0.02\sqrt{r^2+1}} = 0^-.
-	\]
-	Esto implica que la superficie se aproxima al plano \(f=0\) sin llegar a tocarlo, generando un \emph{decaimiento exponencial} de la magnitud de \(f\).  
-	
-	En el extremo opuesto, cuando \(r = \sqrt{x^2 + y^2} \to 0\):
-	\[
-	\lim_{r \to 0} f(x,y) = -200e^{-0.02} \approx -196.04,
-	\]
-	confirmando que el mínimo absoluto ocurre en el origen.
-	
-	
-	El término exponencial impone una disminución controlada que asegura la existencia de un mínimo global y la ausencia de oscilaciones.  
-	En términos prácticos, esto significa que la función es \emph{bien condicionada}, pues su crecimiento y curvatura son moderados, evitando problemas numéricos asociados a gradientes excesivamente grandes o abruptos.
-	
-	En consecuencia, \(f(x,y)\) constituye un caso representativo de superficie suave, acotada y radialmente decreciente, que permite un análisis teórico exhaustivo y una exploración experimental clara de los métodos de optimización.
-	
-	
+
 	
 	\subsection{Implicaciones para algoritmos de optimización}
 	
@@ -554,7 +513,7 @@
 	
 	\begin{itemize}
 		\item Método del gradiente o máximo descenso como técnica de primer orden. 
-		\item Método de Newton o una de sus variantes quasi-Newton como técnica de segundo orden.
+		\item Método quasi-Newton (BFGS) como técnica de segundo orden.
 	\end{itemize}
 	  
 	Ambos permitirán comparar la eficiencia y estabilidad de los métodos según el orden de derivadas empleadas y su sensibilidad a la curvatura del modelo.
@@ -598,7 +557,7 @@
 	
 	\vspace{1em}
 	
-	\subsection{Método de Newton}
+	\subsection{Método quasi-Newton}
 
 	El \emph{método de Newton} es un procedimiento de segundo orden que incorpora información de la curvatura del modelo mediante el Hessiano de la función.  
 	Su fórmula iterativa es:
@@ -622,7 +581,7 @@
 	
 	Tiene una convergencia rápida en la vecindad del óptimo; aprovecha la información de curvatura, adaptando la dirección de búsqueda según la topología local, y no requiere ajuste manual del tamaño de paso si el Hessiano es bien condicionado. Su principal problemática radica en el costo computacional elevado que implica, dado que requiere el cálculo y la inversión del Hessiano en cada iteración, lo que también puede desencadenar errores numéricos si el Hessiano se aproxima a la singularidad (lo que ocurre lejos del mínimo, donde \(\|\nabla^2 f\| \to 0\)). No garantiza convergencia global, pues puede fallar si el punto inicial está demasiado alejado del óptimo.
 	
-	Para evitar los inconvenientes anteriores, se puede utilizar una versión quasi-Newton, como el algoritmo BFGS, que construye una aproximación del Hessiano a partir de información del gradiente:
+	Para evitar los inconvenientes anteriores, se utilizará una versión quasi-Newton (el algoritmo BFGS) que construye una aproximación del Hessiano a partir de información del gradiente:
 	\[
 	B_{k+1} = B_k + \frac{y_k y_k^T}{y_k^T s_k} - \frac{B_k s_k s_k^T B_k}{s_k^T B_k s_k},
 	\]
@@ -636,15 +595,15 @@
 	\begin{center}
 		\begin{tabular}{|l|c|c|}
 			\hline
-			\textbf{Criterio} & \textbf{Gradiente descendente} & \textbf{Newton / quasi-Newton} \\
+			\textbf{Criterio} & \textbf{Gradiente descendente} & \textbf{Quasi-Newton} \\
 			\hline
 			Tipo de método & Primer orden & Segundo orden \\
 			\hline
-			Requisitos de derivadas & Solo gradiente & Gradiente + Hessiano (o aproximación) \\
+			Requisitos de derivadas & Gradiente & Gradiente + aproximación del Hessiano \\
 			\hline
-			Costo por iteración & Bajo & Alto / Medio (BFGS) \\
+			Costo por iteración & Bajo & Medio \\
 			\hline
-			Velocidad de convergencia & Lineal & Cuadrática (o superlineal) \\
+			Velocidad de convergencia & Lineal & Superlineal \\
 			\hline
 			Estabilidad numérica & Alta (si $\alpha$ adecuado) & Sensible al Hessiano \\
 			\hline
@@ -656,7 +615,7 @@
 	\end{center}
 	
 	
-	Ambos métodos se complementan: el gradiente descendente ofrece robustez global y simplicidad, mientras que Newton o quasi-Newton proporcionan refinamiento rápido y precisión local.	Una estrategia combinada —utilizando primero el gradiente descendente y luego Newton o BFGS al acercarse al óptimo— representa la solución más eficiente para el problema planteado.
+	Ambos métodos se complementan: el gradiente descendente ofrece robustez global y simplicidad, mientras que el quasi-Newton proporciona refinamiento rápido y precisión local.	Una estrategia combinada —utilizando primero el gradiente descendente y luego BFGS al acercarse al óptimo— representa la solución más eficiente para el problema planteado.
 	
 	
 	
@@ -680,7 +639,7 @@
 		\item \textbf{Gradiente Descendente (GD)} con paso adaptativo;
 		\item \textbf{BFGS}, método quasi–Newton de segundo orden;
 		\item \textbf{Método Híbrido}, que inicia con GD y conmuta a BFGS
-		al alcanzar un radio de confianza (\(R_{\text{switch}} = 10\) por defecto).
+		al alcanzar un valor dado de la norma del gradiente (\(\text{Gn}_{\text{switch}} = 1\) por defecto).
 	\end{itemize}
 	
 	En todos los casos, los tres métodos convergieron al mismo punto crítico
@@ -798,9 +757,9 @@
 		velocidad, mostrando convergencia superlineal e independencia casi total
 		del punto inicial.
 		\item El \textbf{método híbrido} combina la robustez del GD en las primeras
-		fases con la eficiencia del BFGS en la etapa local. Esta combinación elimina
+		fases con la eficiencia del BFGS en la etapa local. Esta combinación, más eficiente computacionalmente que BFGS, elimina
 		el riesgo de oscilaciones iniciales y mantiene la tasa de convergencia alta
-		en la vecindad del mínimo. Sin embargo, en los casos analizados, no representó una mejoría evidente sobre el BFGS.
+		en la vecindad del mínimo. Sin embargo, en los casos analizados, no representó una mejoría evidente sobre el algoritmo quasi-Newton.
 	\end{enumerate}
 	
 	La estrategia híbrida se confirma así como la más eficiente: 
@@ -810,7 +769,7 @@
 	Los resultados experimentales confirman que los tres métodos convergen al mismo mínimo global con gran precisión. BFGS e híbrido reducen el número de iteraciones en un 40-60\,\% respecto al gradiente descendente y en términos de desempeño, el híbrido logra una precisión de $10^{-13}$ con un costo computacional equivalente al de BFGS puro. Se respalda la conclusión de que
 	la combinación adaptativa de métodos de primer y segundo orden es la
 	alternativa más equilibrada para problemas de optimización no lineal
-	suaves, proporcionando tanto robustez global como eficiencia local.
+	suaves, proporcionando tanto robustez global como eficiencia local. El código en Python utilizado para los experimentos puede consultarse en \href{https://github.com/sebagonz106/Tarea-Evaluativa-Algoritmos}{\textcolor{blue}{\emph{github.com/sebagonz106/Tarea-Evaluativa-Algoritmos}}}.
 	
 	
 	

@@ -12,14 +12,13 @@
 \contentsline {subsection}{\numberline {2.1}Puntos críticos y estacionarios}{5}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Hessiano y clasificación del punto crítico}{5}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Interpretación geométrica}{8}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Cotas y comportamiento asintótico}{9}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Implicaciones para algoritmos de optimización}{10}{subsection.2.5}%
-\contentsline {paragraph}{Método del gradiente descendente:}{10}{section*.7}%
+\contentsline {subsection}{\numberline {2.4}Implicaciones para algoritmos de optimización}{9}{subsection.2.4}%
+\contentsline {paragraph}{Método del gradiente descendente:}{9}{section*.7}%
 \contentsline {paragraph}{Método de Newton.}{10}{section*.8}%
-\contentsline {paragraph}{Métodos estocásticos y variantes.}{11}{section*.9}%
-\contentsline {section}{\numberline {3}Selección y análisis de algoritmos de optimización}{11}{section.3}%
+\contentsline {paragraph}{Métodos estocásticos y variantes.}{10}{section*.9}%
+\contentsline {section}{\numberline {3}Selección y análisis de algoritmos de optimización}{10}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Método de máximo descenso}{11}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Método de Newton}{12}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Comparación}{13}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Discusión de resultados}{13}{section.4}%
-\contentsline {section}{\numberline {5}Conclusiones}{16}{section.5}%
+\contentsline {subsection}{\numberline {3.2}Método quasi-Newton}{11}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Comparación}{12}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Discusión de resultados}{12}{section.4}%
+\contentsline {section}{\numberline {5}Conclusiones}{15}{section.5}%
