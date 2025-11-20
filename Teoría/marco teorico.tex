@@ -26,7 +26,7 @@
 % Datos del documento
 %-------------------------------------
 \title{\textbf{Tarea: Análisis y Aplicación de Algoritmos de Optimización}}
-\author{Sebastian González Alfonso \\ Ciencia de la Computación \\ Tercer Año \\ Modelos de Optimización \\ \href{https://github.com/sebagonz106/Tarea-Evaluativa-Algoritmos}{\textcolor{blue}{Repositorio en GitHub}}}
+\author{Sebastian González Alfonso \\ Ciencia de la Computación \\ Modelos de Optimización \\ \href{https://github.com/sebagonz106/Tarea-Evaluativa-Algoritmos}{\textcolor{blue}{Repositorio en GitHub}}}
 \date{\today}
 %-------------------------------------
 % Inicio del documento
@@ -34,8 +34,51 @@
 \begin{document}
 	
 	\maketitle
+	
+	\begin{abstract}
+		Este informe estudia el comportamiento de métodos de optimización no lineal aplicados a una función \(f: \mathbb{R}^{2} \to \mathbb{R}\). Se analizan detalladamente su gradiente, Hessiano y región de convexidad y se evalúan los métodos de gradiente descendente, BFGS y un enfoque híbrido mediante experimentos numéricos desde diversos puntos iniciales. Los resultados muestran que todos los métodos convergen al mínimo global, pero que BFGS y el enfoque híbrido ofrecen una mayor rapidez y precisión, confirmando la relación entre la estructura analítica de la función y el rendimiento de los algoritmos.
+	\end{abstract}
+	
 	\tableofcontents
-	\newpage
+	
+	\section{Introducción}
+	
+	El estudio de los métodos de optimización no lineal constituye un pilar fundamental
+	en el análisis y resolución de problemas científicos y de ingeniería, especialmente
+	cuando se trabaja con funciones suaves, no convexas y de varias variables. 
+	En estos escenarios, la comprensión tanto de la estructura analítica de la función 
+	como del comportamiento de los algoritmos aplicados es esencial para garantizar 
+	convergencia, estabilidad y eficiencia computacional.
+	
+	El objetivo de este trabajo es analizar de manera rigurosa una función
+	suavemente diferenciable de dos variables, caracterizada por su simetría radial
+	y por presentar un único mínimo global. A partir de esta función se desarrolla
+	un estudio completo que incluye el cálculo detallado del gradiente, la matriz
+	Hessiana y la determinación de las regiones en las que la función presenta 
+	convexidad local. Este análisis teórico permite comprender el relieve de la 
+	superficie y predecir el comportamiento esperado de los algoritmos de optimización.
+	
+	Sobre esta base, se implementan y evalúan distintos métodos de optimización:
+	gradiente descendente, BFGS y un enfoque híbrido que combina las ventajas de ambos.
+	Se realiza un conjunto de experimentos numéricos desde múltiples puntos iniciales,
+	lo que permite comparar robustez, tasa de convergencia y precisión final. Los
+	resultados obtenidos confirman las propiedades analíticas de la función y 
+	permiten establecer criterios fiables para la selección del método más adecuado
+	en términos de eficiencia numérica.
+	
+	El informe integra un marco teórico, los resultados experimentales
+	y las conclusiones derivadas, proporcionando una visión global sobre el 
+	comportamiento de métodos de primer y segundo orden aplicados a funciones no
+	lineales suaves. Este estudio constituye un ejemplo representativo de cómo la
+	interacción entre teoría y experimentación permite comprender de forma profunda
+	el rendimiento de los algoritmos de optimización en escenarios reales y controlados.
+	
+	
+	
+	
+	
+	
+	
 	
 	\section{Marco Teórico \cite{Bouza2021}}
 	\subsection{Notación y definición general}
@@ -126,7 +169,7 @@
 	En estos métodos quasi-newton, si \(H_0\) es simétrica y definida positiva y \(s_k^{\top}y_k>0\) para todo \(k\), entonces \(H_k\) conserva esas propiedades. Además, el costo computacional por iteración es \(O(n^2)\), mucho menor que el \(O(n^3)\) del método de Newton exacto.
 	
 	
-	\subsubsection{Selección del tamaño de paso: condiciones de Armijo y de Wolfe}
+	\subsubsection*{Selección del tamaño de paso}
 	
 	En los métodos de optimización de tipo búsqueda en línea, la iteración tiene la forma
 	\[
@@ -178,18 +221,10 @@
 		\item \emph{Métodos de tipo SQP (Sequential Quadratic Programming):} en cada iteración se resuelve un QP que aproxima el problema original. El orden de convergencia es cuadrático bajo condiciones regulares y son muy efectivos en restricciones suaves y de dimensión moderada.
 	\end{itemize}
 	
-
-	\subsubsection{Criterios de parada típicos y métricas numéricas}
-	\begin{itemize}[nosep]
-		\item \(\|\nabla f(x_k)\| < \varepsilon_{\text{grad}}\).
-		\item \(\|x_{k+1}-x_k\| < \varepsilon_{\text{step}}\).
-		\item Número máximo de iteraciones o evaluaciones de función.
-	\end{itemize}
 	
 	
 	
-
-
+	
 
 	
 	
@@ -454,48 +489,12 @@
 	Por analogía con la física, el origen representa una \emph{zona de atracción estable}, hacia la cual convergen las trayectorias definidas por el campo de gradiente.  
 	
 	\vspace{1em}
-	
-
-	
-	\subsection{Implicaciones para algoritmos de optimización}
-	
-	El comportamiento teórico del gradiente y la forma global de la superficie permiten anticipar el rendimiento y las posibles dificultades de los algoritmos de optimización aplicados a \(f(x,y)\).
-	
-	\paragraph{Método del gradiente descendente:}  
-	Dado que el gradiente apunta radialmente hacia el origen y su magnitud decrece suavemente, el método de gradiente descendente garantiza convergencia global para cualquier punto inicial \((x_0,y_0)\).  
-	No obstante, la velocidad de convergencia dependerá del tamaño del paso (\(\alpha\)):
-	\[
-	\mathbf{x}_{k+1} = \mathbf{x}_k - \alpha \nabla f(\mathbf{x}_k).
-	\]
-	Si \(\alpha\) es demasiado grande, el algoritmo puede sobrepasar el mínimo (debido a la pendiente suave en la periferia); si es demasiado pequeño, el avance se vuelve extremadamente lento.  
-	Por ello, resulta recomendable emplear técnicas adaptativas de selección de paso.
-	
-	\paragraph{Método de Newton.}  
-	El método de Newton se beneficia de la suavidad y la positividad local del Hessiano:
-	\[
-	\mathbf{x}_{k+1} = \mathbf{x}_k - [\nabla^2 f(\mathbf{x}_k)]^{-1}\nabla f(\mathbf{x}_k).
-	\]
-	Cerca del origen, la curvatura es pronunciada y el Hessiano está bien condicionado, lo que garantiza convergencia cuadrática.  
-	Sin embargo, en regiones alejadas (donde la curvatura tiende a cero), el Hessiano se aproxima a la matriz nula y puede causar inestabilidad numérica.  
-	Por tanto, el método de Newton debe iniciarse en puntos relativamente cercanos al mínimo o combinarse con estrategias híbridas de primer orden.
-	
-	\paragraph{Métodos estocásticos y variantes.}  
-	Los algoritmos estocásticos o metaheurísticos (como \emph{simulated annealing} o \emph{particle swarm optimization}) no se benefician particularmente de la estructura de \(f\), dado que no existen óptimos locales aleatoriamente distribuidos que justifiquen la aleatoriedad, por lo que los métodos deterministas estudiados son la mejor opción para realizar el análisis.
-	
-	\qquad
-	 
-	A partir de las propiedades demostradas, pueden establecerse las siguientes expectativas y objetivos de validación empírica:
-	
-	\begin{itemize}
-		\item El punto \((0,0)\) debe ser identificado consistentemente como el \emph{único mínimo global}.
-		\item Las trayectorias de convergencia de los algoritmos deben ser aproximadamente radiales, reflejando la simetría del campo de gradiente.
-		\item Los valores de \(f(x,y)\) deben aproximarse a cero para puntos alejados del origen, validando el comportamiento asintótico descrito.
-		\item La magnitud del gradiente debe decrecer exponencialmente con la distancia, produciendo una convergencia lenta en la periferia.
-	\end{itemize}
-	
 
 
 
+
+	\newpage
+	
 
 
 
@@ -506,8 +505,19 @@
 	\[
 	f(x,y) = -200 e^{-0.02\sqrt{x^2 + y^2 + 1}},
 	\]
-	se seleccionan algoritmos adecuados considerando la suavidad, continuidad y ausencia de restricciones del problema.  
+	se seleccionaron algoritmos adecuados considerando la suavidad, continuidad y ausencia de restricciones del problema.
+	  
 	Dado que la función es diferenciable en todo \(\mathbb{R}^2\), con un único mínimo global y sin discontinuidades, los métodos de optimización continua sin restricciones son los más apropiados.  
+	
+	A partir de las propiedades demostradas, pueden establecerse las siguientes expectativas y objetivos de validación empírica:
+	
+	\begin{itemize}
+		\item El punto \((0,0)\) debe ser identificado consistentemente como el \emph{único mínimo global}.
+		\item Las trayectorias de convergencia de los algoritmos deben ser aproximadamente radiales, reflejando la simetría del campo de gradiente.
+		\item Los valores de \(f(x,y)\) deben aproximarse a cero para puntos alejados del origen, validando el comportamiento asintótico descrito.
+		\item La magnitud del gradiente debe decrecer exponencialmente con la distancia, produciendo una convergencia lenta en la periferia.
+	\end{itemize}
+	
 	
 	Entre las opciones posibles (métodos de barrera, penalización, máximo descenso, búsqueda direccional, Newton y quasi-Newton), se proponen dos enfoques representativos:
 	
@@ -522,7 +532,7 @@
 	\vspace{1em}
 	
 	
-	\subsection{Método de máximo descenso}
+	\subsection*{Método de máximo descenso}
 	
 	El \emph{método del máximo descenso}, también denominado método del gradiente descendente, se basa en la iteración:
 	\[
@@ -557,7 +567,7 @@
 	
 	\vspace{1em}
 	
-	\subsection{Método quasi-Newton}
+	\subsection*{Método quasi-Newton}
 
 	El \emph{método de Newton} es un procedimiento de segundo orden que incorpora información de la curvatura del modelo mediante el Hessiano de la función.  
 	Su fórmula iterativa es:
@@ -590,7 +600,7 @@
 	
 	\vspace{1em}
 	
-	\subsection{Comparación}
+	\subsection*{Comparación}
 	
 	\begin{center}
 		\begin{tabular}{|l|c|c|}
@@ -615,7 +625,7 @@
 	\end{center}
 	
 	
-	Ambos métodos se complementan: el gradiente descendente ofrece robustez global y simplicidad, mientras que el quasi-Newton proporciona refinamiento rápido y precisión local.	Una estrategia combinada —utilizando primero el gradiente descendente y luego BFGS al acercarse al óptimo— representa la solución más eficiente para el problema planteado.
+	Ambos métodos se complementan: el gradiente descendente ofrece robustez global y simplicidad, mientras que el quasi-Newton proporciona refinamiento rápido y precisión local.	Una estrategia combinada —utilizando primero el gradiente descendente y luego BFGS al acercarse al óptimo— representa la solución en teoría más eficiente para el problema planteado.
 	
 	
 	
